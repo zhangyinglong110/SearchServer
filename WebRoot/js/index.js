@@ -71,7 +71,7 @@ $(function(){
 			$(nowPage).find("img").removeClass("hide");
 
 			isAnimating = false;
-		},600);
+		},500);
 	}
 
   	// 全局对象，取到所有字段的值
@@ -84,8 +84,8 @@ $(function(){
 	});
 	
 	// 获取职位信息，取得对应的json文件路径
-	function getJobName(){
-		var tag = "讲师";
+	function getJobName(type){
+		var tag = type;
 		var path = "";
 		switch(tag){
 			case "讲师":
@@ -128,12 +128,27 @@ $(function(){
 				resolve(subs);
 			});
 		});
-		// 加载题目数据
 		var p3 = new Promise(function(resolve, reject){
-			var jsonpath = getJobName();
-			$.getJSON(jsonpath,function(titles){
-				resolve(titles);
+			$.ajax({
+				async:false,
+				method:"POST",
+				traditional:true,
+				url:"recentServlet",
+				data: {
+					//checkJson: JSON.stringify(postdata)
+				},
+				async:true,
+				success: function(data){
+					resolve(data);
+				},
+				error: function(err){
+					//callback(null,err);
+				}
 			});
+		// TODO
+		//			$.getJSON("recentServlet",function(tcs){
+		//				resolve(tcs);
+		//			});
 		});
 		
 		Promise.all([p0,p1,p2,p3]).then(function(results){
@@ -143,10 +158,36 @@ $(function(){
 			schoolChoice(results[1]);
 			// 专业
 			confSubjectText(results[2]);
-			//题目
-			recycleDiv(results[3]);
+			// 老师班级数据
+			updateClassAndTeaName(results[3]);
+			
 		});
 	})();
+	
+	function updateClassAndTeaName(tcs){
+		var classSpans = $(".classListOne span");
+		var min = Math.min(tcs.classList.length,classSpans.length);
+		for(var i=0;i<min;i++){
+			$(classSpans[i]).html(tcs.classList[i]);
+		}
+		// 隐藏没有内容的span
+		if(min<classSpans.length){
+			for(var i=min;i<classSpans.length;i++){
+				$(classSpans[i]).hide();
+			}
+		}
+		var teaNameSpans = $(".nameList span");
+		min = Math.min(tcs.teacherName.length,teaNameSpans.length);
+		for(var i=0;i<min;i++){
+			$(teaNameSpans[i]).html(tcs.teacherName[i]);
+		}
+		if(min<teaNameSpans.length){
+			for(var i=min;i<teaNameSpans.length;i++){
+				$(teaNameSpans[i]).hide();
+			}
+		}
+	}
+	
 	// 配置专业数据
 	var subs = [];
 	function confSubjectText(sub){
@@ -206,10 +247,12 @@ $(function(){
 
 	//点击学校名称页面的×号，关闭页面
 	$(".modal-close-btn").on("singleTap",function(){
-		$("#schools").css("display","none");
-		$(".kuang").css("display","none");
-		$("#confirm").css("display","none");
-		$("#confirm").unbind();
+		setTimeout(function(){
+			$("#schools").css("display","none");
+			$(".kuang").css("display","none");
+			$("#confirm").css("display","none");
+			$("#confirm").unbind();
+		},500);
 	});
 
 	//得到专业的value值
@@ -228,10 +271,10 @@ $(function(){
 		});
 		temp.cus_Name = $(this).html();
 	});
-	//得到教师的名字
+	/*//得到教师的名字
 	$("#uName").blur(function(){
 		temp.tea_Name = $(this).val();
-	});
+	});*/
 	//判断输入的字符是否满足要求
 	function isMatch(){
 		var user = $("#uName").val();
@@ -252,46 +295,85 @@ $(function(){
     	hidebox();
     });
 
-	$("#uName").bind("input propertychang",function(){
+	$("#uName").bind("input propertychange",function(){
+		var classInputVal=$("#classInput").val();
 		var taValue = $("#uName").val();
 		var len = getCharSize(taValue);
-		if (len >= 4 && len <= 8 && isMatch()) {
+		if (len >= 4 && len <= 8 && isMatch() &&classInputVal!="") {
 			$(".btn").css("background","#14c6d0");
 			//解绑点击事件
 			$(".btn").unbind();
+			$(".btn").click(lightBtnAndAjax);
 			
-			$(".btn").click(function(){
-				//在这里发送ajax请求给后台，判断是否已经评论过了
-				var postdata = {
-					"large_Area": temp.large_Area,
-					"sch_Name": temp.sch_Name,
-					"cus_Name": temp.cus_Name,
-					"tea_Name": temp.tea_Name
-				};
-				postComment(postdata,function(isComment,err){
-					if(err){
-						showbox("网络错误");
-					}else{
-						isComment = Number.parseInt(isComment)
-						if(isComment == 0){
-							showbox("您本月度对此老师评论过了！");
-						}else{
-							//向上滑动到下一页
-							if (isAnimating) return;
-							last.row = now.row;
-							last.col = now.col;
-							if (last.row != 12) { now.row = last.row+1; now.col = 1; pageMove(towards.up);}
-							return true;
-						}
-					}
-				});
-			});
 		}else if(len < 4 || !isMatch()){
 			$(".btn").css("background","#ccc");
 			//解绑点击事件
 			$(".btn").unbind();
 		}
 	});
+	
+	$("#classInput").bind("input propertychange",function(){
+		if($("#classInput").val()==""){
+			$(".btn").css("background","#ccc");
+			//解绑点击事件
+			$(".btn").unbind();
+		}else{
+			var taValue = $("#uName").val();
+			var len = getCharSize(taValue);
+			if (len >= 4 && len <= 8 && isMatch()) {
+				$(".btn").css("background","#14c6d0");
+				//解绑点击事件
+				$(".btn").unbind();
+				$(".btn").click(lightBtnAndAjax);
+			}
+		}
+	});
+	
+	function lightBtnAndAjax(){
+		//获取老师的类型
+		var typeValue  = $('input[name="tachertype"]:checked').val(); 
+		//console.log(typeValue);
+		var jsonpath = getJobName(typeValue);
+		$.getJSON(jsonpath,function(titles){
+			recycleDiv(titles);
+		});
+		
+		//在这里发送ajax请求给后台，判断是否已经评论过了
+		//类型
+		if(typeValue == "讲师"){
+			temp.role_Level = 0;
+		}else if(typeValue == "班主任"){
+			temp.role_Level = 1;
+		}
+		//tmp.role_Level = typeValue;
+		//得到班级的名字
+		temp.stu_Class=$("#classInput").val();
+		//得到教师的名字
+		temp.tea_Name = $("#uName").val();
+		var postdata = {
+			"large_Area": temp.large_Area,
+			"sch_Name": temp.sch_Name,
+			"cus_Name": temp.cus_Name,
+			"tea_Name": temp.tea_Name
+		};
+		postComment(postdata,function(isComment,err){
+			if(err){
+				showbox("网络错误");
+			}else{
+				isComment = Number.parseInt(isComment)
+				if(isComment == 0){
+					showbox("您本月度对此老师评论过了！");
+				}else{
+					//向上滑动到下一页
+					if (isAnimating) return;
+					last.row = now.row;
+					last.col = now.col;
+					if (last.row != 12) { now.row = last.row+1; now.col = 1; pageMove(towards.up);}
+					return true;
+				}
+			}
+		});
+	}
 	
 	//ajax请求，判断是否已经评论过了
 	function postComment(postdata,callback){
@@ -317,19 +399,18 @@ $(function(){
 	$("#suggestions").bind("input propertychang",function(){
 		var taValue = $("#suggestions").val();
 		temp.stu_Advice= taValue;
-
 	});
 
 
 	//表单验证
 	//当失去焦点的时候，判断不能为空
-	$("#uName").blur(function(){
+	/*$("#uName").blur(function(){
 		if($("#uName").val() == ""){
 			$(".nameRemindWords").html("姓名不能为空");
 		}else{
 			$(".nameRemindWords").html("");
 		}
-	});
+	});*/
 
 	$("#courses").blur(function(){
 		if($("#courses").val() == ""){
@@ -353,8 +434,7 @@ $(function(){
 
 	//单选框中name的值的数组
 	//单选框中id的值的数组
-	var dataObj =
-		[
+	var dataObj =[
 		["alway","sometimes","nolate","always","everyday","every"],
 		["noOrder","canBut","canUnderstan","tuChu","mindClea","bothClear"],
 		["noQuestion","strangeQuestion","rareQuestion","goodQuestions","goodQuestion","excellentQuestion"],
@@ -365,100 +445,117 @@ $(function(){
 		["noThinkAboutClass","noThinkAboutFact","goodButGood","goodContentButDifficult","burden","goodContent"],
 		["noExample","rare","normalInfluence","goodInfluence","rich","oneAndThree"],
 		["never","s","everyDayButNever","everydaySome","everydayAndAlways","accurate"]
-		];
+	];
 
-	//单选框的name属性取出来循环
+	// 单选框的name属性取出来循环
 	var nameArr= ["attendance","onClass","questions","answers","tutorAfterClass",
 		"discipline","skills","progress","explain","works"];
 	var scoreNames = {attendance:"tea_Attendance",onClass:"cls_Explain",
 		questions:"cls_Quesions", answers:"ques_Answer", tutorAfterClass:"cls_Coach",
 		discipline:"cls_Discipline",skills:"cls_Skill",progress:"cls_Progress",
 		explain:"exam_Explain", works:"class_Homework"};
+	var titles = {};
 	function recycleDiv(data){
+		titles = data;
+		// 根据json文件修改第1、2题的内容
+		$('.page-title.one').html(titles.subject[0].title);
+		$('.page-title.two').html(titles.subject[1].title);//siblings
+		// 根据json文件修改第1、2题内容
+		var labelArr = $('.page-title.one').siblings(".pageChoice").find("label");
+		labelArr.each(function(index,item){
+			$(item).html(titles.subject[0].options[index]);
+		});
+		labelArr = $('.page-title.two').siblings(".pageChoice").find("label");
+		labelArr.each(function(index,item){
+			$(item).html(titles.subject[1].options[index]);
+		});
+		
 		for(var h= 0;h<nameArr.length;h++){
 			var arrStr=nameArr[h];
-			$("input[name ="+arrStr+"]").click(function(){  //选中的单选框
-				//选中的单选框题目是几分
-				var key = $(this).attr('name');
-				var val = scoreNames[key];
-				temp[val] = parseInt($(this).val());
+			$("input[name ="+arrStr+"]").click(radioClickEvent);
+		}
+	}
+	// 点击单选框触发事件
+	function radioClickEvent(){
+		//选中的单选框题目是几分
+		var key = $(this).attr('name');
+		var val = scoreNames[key];
+		// 设置全局变量中对应属性的分数值
+		temp[val] = parseInt($(this).val());
 
-				//点击单选框选项的时候，下一题的按钮颜色变化&& 页面滑动到下一页
-				$(".nextQuestion").css("background","");
-				$(this).parent(".pageChoice").siblings('.nextQuestion').
-					css("background","#14c6d0");
-				//点击下一题
-				//$(this).parent(".pageChoice").siblings('.nextQuestion').unbind();
-				$(this).parent(".pageChoice").siblings('.nextQuestion')
-				.on("singleTap", function(){
-					//取到当前页面的value值，来改变页码数
-					var value = Number.parseInt($(this).parents(".page").attr('value'));
-					//改变当前页面的class的page-5-1的值
-					var nowDiv = $(this).parents(".page")
-						.removeClass()
-						.addClass("page-"+(value+2)+"-1")
-						.addClass("hide")
-						.addClass("page")
-						.attr('value',value+2);
-						setTimeout(function(){
-							$(this).parents(".page").next().after(nowDiv);
-						},1000);
+		//点击单选框选项的时候，下一题的按钮颜色变化&& 页面滑动到下一页
+		$(".nextQuestion").css("background","");
+		$(this).parent(".pageChoice").siblings('.nextQuestion').
+			css("background","#14c6d0");
+		//点击下一题
+		$(this).parent(".pageChoice").siblings('.nextQuestion')
+			.on("singleTap", nextQuestionEvent);
+	}
+	// 点击下一题触发事件，更新题卡内容
+	function nextQuestionEvent(){
+		//取到当前页面的value值，来改变页码数
+		var value = Number.parseInt($(this).parents(".page").attr('value'));
+		//改变当前页面的class的page-5-1的值
+		var nowDiv = $(this).parents(".page")
+			.removeClass()
+			.addClass("page-"+(value+2)+"-1")
+			.addClass("hide")
+			.addClass("page")
+			.attr('value',value+2);
+		setTimeout(function(){
+			$(this).parents(".page").next().after(nowDiv);
+		},1000);
 
-					//题卡到第十题的时候，停止循环
-					if(value>12){
-						nowDiv.removeClass("page-"+(value+2)+"-1");
-					}
-					//点击下一题页面滑动
-					if (isAnimating) return;
-					last.row = now.row;
-					last.col = now.col;
-					if (last.row != 15) { now.row = last.row+1; now.col = 1;
-							pageMove(towards.up);}
-					//题卡的页数1/10
-					var pageNum = nowDiv.find(".pageNum");
-					var page = $(pageNum).html(value-2);
+		// 题卡到第十题的时候，停止循环
+		if(value>12){
+			nowDiv.removeClass("page-"+(value+2)+"-1");
+		}
+		// 点击下一题页面滑动
+		if (isAnimating) return;
+		last.row = now.row;
+		last.col = now.col;
+		if (last.row != 15) { now.row = last.row+1; now.col = 1;
+				pageMove(towards.up);}
+		//题卡的页数1/10
+		var pageNum = nowDiv.find(".pageNum");
+		var page = $(pageNum).html(value-2);
 
-					//修改input的name值
-					var inputArr = nowDiv.find("input");
-						for(var i=0;i<inputArr.length;i++){
-						inputArr[i].name=nameArr[value-3];
+		// 修改input的name值
+		var inputArr = nowDiv.find("input");
+			for(var i=0;i<inputArr.length;i++){
+			inputArr[i].name=nameArr[value-3];
+		}
+		//修改题卡的标题
+		if(value<13){
+			nowDiv.find('.page-title').html(titles.subject[value-3].title);
+			//改变单选框id的值
+			var labelArr = nowDiv.find("label");
+			labelArr.each(function(index,item){
+				$(item).attr("for",dataObj[value-3][index]);
+			});
 
-					}
-					//修改题卡的标题
-					if(value<13){
-						/*$(this).parents(".page").next().after(nowDiv);*/
-						nowDiv.find('.page-title').html(data.subject[value-3].title);
+			//改变题卡的选项内容
+			labelArr.each(function(index,item){
+				$(item).html(titles.subject[value-3].options[index]);
+			});
 
-						//改变单选框id的值
-						var labelArr = nowDiv.find("label");
-						labelArr.each(function(index,item){
-							$(item).attr("for",dataObj[value-3][index]);
-						});
-
-						//改变题卡的选项内容
-						labelArr.each(function(index,item){
-							$(item).html(data.subject[value-3].options[index]);
-						});
-
-						//清除所有被选中的单选框
-						var radios = $("input[type='radio']");
-						for(var i=0;i<radios.length;i++){
-							if(radios[i].checked){
-								radios[i].checked = false;
-							}else{
-								$(".nextQuestion").unbind();
-							}
-						}
-						//改变单选框id的值
-						var inputArr = nowDiv.find("input[type='radio']");
-						$(inputArr).each(function(index,item){
-							$(item).attr("id",dataObj[value-3][index]);
-						});
-					}
-				});
+			//清除所有被选中的单选框
+			var radios = $("input[type='radio']");
+			for(var i=0;i<radios.length;i++){
+				if(radios[i].checked){
+					radios[i].checked = false;
+				}else{
+					$(".nextQuestion").unbind();
+				}
+			}
+			//改变单选框id的值
+			var inputArr = nowDiv.find("input[type='radio']");
+			$(inputArr).each(function(index,item){
+				$(item).attr("id",dataObj[value-3][index]);
 			});
 		}
 	}
+	//TODO
 	//全部提交按钮，传输数据
 	$(".lastSubmit").click(function(){
 		//如果建议没有填的话，传空字符传上去
@@ -497,9 +594,22 @@ $(function(){
 				}
 			},
 			error: function(err){
-				showbox("网络错误！");
+				//showbox("网络错误！");
+				if (isAnimating) return;
+				last.row = now.row;
+				last.col = now.col;
+				if (last.row != 12) {
+					now.row = last.row + 1;
+					now.col = 1; pageMove(towards.up);
+				}
 			}
 		});
+	});
+	
+	// 返回第一屏
+	$(".returnFirstPage").click(function(){
+		window.location="index.html?r="+Math.random();
+		
 	});
 	
 	//显示柱形图
@@ -570,7 +680,43 @@ $(function(){
 		myChart.setOption(option);
 		$("#bTit").html(lartit+"大区"+strtit+"排行");
 	}
+	
+	/***第四屏姓名输入框+班级输入框**/	
+	$(".classListOne span").click(function(){
+		$("#classInput").val($(this).html());
+		
+		if($("#uName").val()!=""){
+			//点亮下方按钮
+			$(".btn").css("background","#14c6d0");
+			//解绑点击事件
+			$(".btn").unbind();
+			$(".btn").click(lightBtnAndAjax);
+		}
+	});
+	
+	$(".nameList span").click(function(){
+		$("#uName").val($(this).html());
+		if($("#classInput").val()!=""){
+			//点亮下方按钮
+			$(".btn").css("background","#14c6d0");
+			//解绑点击事件
+			$(".btn").unbind();
+			$(".btn").click(lightBtnAndAjax);
+		}
+	});
 
+	function clearInputValue(){
+		$(".btn").css("background","#ccc");
+		//解绑点击事件
+		$(".btn").unbind();
+		if($(this).attr("class")=="closeBtn1"){
+			$("#classInput").val("");
+		}else{
+			$("#uName").val("");
+		}
+	}
+	$(".closeBtn1").click(clearInputValue);
+	$(".closeBtn2").click(clearInputValue);
 });
 
 

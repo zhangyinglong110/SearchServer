@@ -2,7 +2,9 @@ body{
 	background:#f6f6f6;
 }
 
-
+.margin-auto{
+	margin:0 auto;
+}
 .box{
 	z-index: 100;
     position: fixed;  
@@ -24,7 +26,7 @@ body{
     margin: 40% auto; 
     background-color: #FFFFFF;
     border: 1px solid #ccc;
-	border-radius: 5px;
+	/*border-radius: 5px;*/
 }
 .cont p{
 	width: 100%;
@@ -63,32 +65,32 @@ body{
 	width:40%;
 	height:40px;
 	background:#0cd8e3;
-	border-radius:50px;
+	/*border-radius:50px;*/
 	color:#fff;
 	font-size:.7rem;
-	font-weight:900;
+	/*font-weight:900;*/
+	cursor: pointer;
 }
-
 
 /**遮罩层**/
 .kuang{
 	width:100%;
 	height:100%;
-	background-color:#000;
-	opacity:0.3;
+	background-color: rgba(0,0,0,0.3);
+/*	opacity:0.3;*/
 	z-index:100;
 	display:none;
 	position:absolute;
 }
-
+/**学校**/
 #schools{
 	width:85%;
 	height:60%;
 	background: #fff;
 	position: fixed;
 	top: 12%;
-  left:7.5%;
-  display:none;
+    left:7.5%;
+    display:none;
 	z-index:1000;
 	border-radius:20px;
 	padding-top:9%;
@@ -97,14 +99,14 @@ body{
 
 .modal-close-btn {
 	position: absolute;
-	top: 0%;
-	right: -6%;
-	width: 32px;
-	height: 32px;
-	padding: 32px;
-	opacity: 0.8;
-	cursor: pointer;
-	transition: 0.3s ease;
+	top: 8%;
+	right: 6%;
+	width: 25px;
+	height: 25px;
+	/*padding: 32px;*/
+	/*opacity: 0.8;*/
+	/*cursor: pointer;*/
+	/*transition: 0.3s ease;*/
 	z-index:10000;
 }
 
@@ -249,22 +251,22 @@ body{
 	margin-top:34%;
 	color:#fff;
 	text-align:center;
-	font-weight:900;
+	/*font-weight:900;*/
 	font-size:0.7rem;
 	transition: 0.5s ease;
-
+	cursor: pointer;
 }
 .nextQuestionGreen{
 	width:30%;
 	height:30px;
 	line-height:30px;
 	background-color:#52a245;
-	border-radius:20px;
+	/*border-radius:20px;*/
 	margin-left:50%;
 	margin-top:26%;
 	color:#fff;
 	text-align:center;
-	font-weight:900;
+	/*font-weight:900;*/
 }
 .triangleIcon{
 	height:auto;
@@ -275,24 +277,79 @@ body{
 	margin-left:-13px;
 }
 
-
-.page-4-1 .inp{
-	width:90%;
-	height:40px;
-	border:1px solid #14c6d0;
-	font-size:0.6rem;
-	display:block;
-	margin:0 auto;
-	margin-top:6%;
-	border-radius:6px 50px 8px 20px;
-  padding-left:6%;
+.closeBtn1{
+	cursor: pointer;
+	margin-left: 1%;
+	/*position:absolute;
+	right:15%;
+    top:16%;*/
 }
+.closeBtn2{
+	cursor: pointer;
+	margin-left: 1%;
+	/*position:absolute;
+	right:15%;
+    top:43%;*/
+ }
+/**page-4-1**/
+.page-4-1 .inp{
+	width:85%;
+	height:35px;
+	border:0px solid #14c6d0;
+	font-size:0.6rem;
+	margin:0 auto;
+	margin-bottom:0px;
+    padding-left:5%;
+    /*background: url(../images/close.png) no-repeat center right;*/
+}
+
+.inputAndCloseBtn1{
+	width: 100%;
+	border:1px solid #14c6d0;
+}
+
+.inputAndCloseBtn2{
+	width: 100%;
+	border:1px solid #14c6d0;
+}
+
+.typechoise{
+	margin-top: 15%;
+}
+
+/**班级列表**/
+.classList{
+	width:100%;
+}
+.form-container li{
+	margin:2px;
+}
+
+.nameContainer{
+	margin-top: 10px;
+}
+
+
+.classList span{
+	display: inline-block;
+	border-radius:5px;
+	border:1px solid #999999;
+	margin:2px;
+	padding:5px 10px;
+	background-color: #d0f7c1;
+	font:20px/20px "幼圆","楷体","宋体",Arial,sans-serif;
+	text-align:center;
+	cursor:pointer;
+}
+
 .count{
 	position:absolute;
 	top:94%;
 	width:10%;
 	left:45%;
 }
+
+
 
 #confirm{
 	position: absolute;
@@ -302,14 +359,14 @@ body{
 	height:40px;
 	background-color:#878787;
 	font-size:0.7rem;
-	font-weight:900;
+	/*font-weight:900;*/
 	line-height:40px;
 	text-align:center;
 	transition: 0.5s ease;
 	z-index:1000000;
 	color:#fff;
 	display:none;
-	border-radius:20px;
+	/*border-radius:20px;*/
 }
 .profession{
 	border:1px solid #c7c7c7;
@@ -326,33 +383,44 @@ body{
 	display:block;
 	margin:0 auto;
 	font-size:0.7rem;
-	font-weight:900;
+	/*font-weight:900;*/
 	text-align:center;
 	margin-top:120%;
 	transition: 0.5s ease;
 }
 .btn{
+   /* width: 80%;
+    height:40px;
+	line-height:40px;
+	background-color:#878787;
+	color:#fff;
+	margin:0 auto;
+	font-size:0.7rem;
+	text-align:center;
+    position: fixed;
+    left: 10%;
+    bottom: 10%;*/
+	
+	
+	
 	width:100%;
 	height:40px;
 	line-height:40px;
 	background-color:#878787;
-	border-radius:20px;
 	color:#fff;
 	display:block;
 	margin:0 auto;
 	font-size:0.7rem;
-	font-weight:900;
 	text-align:center;
-	margin-top:110%;
+	margin-top:15%;
 	transition: 0.5s ease;
+	cursor: pointer;
 }
 
 .pageChoice{
 	width:100%;
 	margin:0 auto;
 	height:50%;
-
-
 }
 .pageChoice input{
 	margin-top:5%;
@@ -383,13 +451,26 @@ label{
 .lastSubmit{
 	margin:0 auto;
 	margin-top:70%;
-	border-radius:20px;
+	/*border-radius:20px;*/
 	width:100%;
 	height:40px;
 	line-height:40px;
 	background-color: #0cd8e4;
 	color:#fff;
-	font-weight:900;
+	/*font-weight:900;*/
 	text-align:center;
 	font-size:0.7rem;
+}
+
+.returnFirstPage{
+	margin:0 auto;
+	margin-top:50%;
+	width:50%;
+	height:40px;
+	line-height:40px;
+	background-color: #0ff;
+	color:#fff;
+	text-align:center;
+	font-size:0.7rem;
+	cursor: pointer;
 }

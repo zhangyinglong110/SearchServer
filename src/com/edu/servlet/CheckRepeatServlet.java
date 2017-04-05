@@ -34,11 +34,11 @@ public class CheckRepeatServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8");// 设置请求参数的编码
 		String checkJson = req.getParameter("checkJson");
-		System.out.println("CheckServlet---->" + checkJson);
+		System.out.println("CheckServlet传过来的条件---->" + checkJson);
 		resp.setCharacterEncoding("UTF-8");// 设置响应的编码格式
 		resp.setHeader("Access-Control-Allow-Origin", "*");
 		String unionid = (String) req.getSession().getAttribute("unionid"); // 获取到用户的ID
-		System.out.println("CheckServlet---->" + unionid);
+		System.out.println("CheckServlet---unionid---->" + unionid);
 		Investigation beans = new JsonUtil().getCheckRepeatJson(checkJson, unionid);
 		PrintWriter pw = resp.getWriter();
 		try {

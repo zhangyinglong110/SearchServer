@@ -3,7 +3,6 @@ package com.edu.servlet;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -19,6 +18,12 @@ import com.edu.bean.WeiXinUserInfo;
 import com.edu.global.Global;
 import com.edu.util.JsonUtil;
 
+/**
+ * LoginServlet回调回来的
+ * 
+ * @author Poppy(张应龙)
+ *
+ */
 @WebServlet(name = "callBackServlet", urlPatterns = "/callBackServlet")
 public class CallBackServlet extends HttpServlet {
 
@@ -37,30 +42,39 @@ public class CallBackServlet extends HttpServlet {
 		// 控制台输出code和state
 		System.out.println("redirct code-->" + code + ",redirct state-->" + state);
 		String randomValue = (String) req.getSession().getAttribute("randomValue");
-
-		if (code != null && (state.equals(randomValue))) {
+		System.out.println("CallBackServlet--randomValue--->" + randomValue);
+		if (code != null && state != null) {
 			req.getSession().removeAttribute("randomValue");
+			// 第一个URL地址
 			String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=" + Global.APP_ID + "&secret="
 					+ Global.SECRET + "&code=" + code + "&grant_type=authorization_code";
 			String jsonString = doGetByHttpClient(url); // 返回的是json字符串
 			System.out.println("access_token-->" + jsonString);
+			// 存储微信令牌信息的实体类
 			WeiChatInfo weiChatInfo = new JsonUtil().getWeiChat(jsonString);
+
+			// 获取到用户的基本信息
 			String getUserUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=" + weiChatInfo.getAccess_token()
 					+ "&openid=" + weiChatInfo.getOpenid();
-			// String weiUseString = doGetByHttpClient(getUserUrl);
-			// System.out.println("---->two token" + weiUseString);
-			// WeiXinUserInfo weiXinUserInfo = new
-			// JsonUtil().getWeiXinUserInfo(weiUseString);
+			String weiUseString = doGetByHttpClient(getUserUrl);
+			System.out.println("---->CallServlet two token" + weiUseString);
+			WeiXinUserInfo weiXinUserInfo = new JsonUtil().getWeiXinUserInfo(weiUseString);
 			HttpSession session = req.getSession();
 			session.setAttribute("unionid", weiChatInfo.getUnionid());
+			session.setAttribute("nickname", weiXinUserInfo.getNickname());
 			resp.sendRedirect("index.html");
-			// req.getRequestDispatcher("index.html").forward(req, resp);//
-			// 重定向页面
 		} else {
+			System.out.println("CallBackServlet----->else条件");
 			resp.sendRedirect("tankyou.html");
 		}
 	}
 
+	/**
+	 * 发起网络请求
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public String doGetByHttpClient(String url) {
 		BufferedReader in = null;
 		String result = "";

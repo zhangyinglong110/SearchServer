@@ -118,6 +118,7 @@
 				<th>校区</th>
 				<th>教师姓名</th>
 				<th>专业</th>
+				<th>班级</th>
 				<th>投票人数</th>
 				<th>平均分</th>
 			</tr>
@@ -202,6 +203,7 @@
 					$tr.append($td.clone().text(json[i].sch_Name));
 					$tr.append($td.clone().text(json[i].tea_Name));
 					$tr.append($td.clone().text(json[i].cus_Name));
+					$tr.append($td.clone().text(json[i].stu_Class));
 					$tr.append($td.clone().text(json[i].peopleCount));
 					$tr.append($td.clone().text(json[i].average));
 					$tr.appendTo($("#data_body")); //别忘了最后要把内容放入前面的tbody  

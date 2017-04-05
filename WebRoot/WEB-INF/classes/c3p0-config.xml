@@ -13,10 +13,15 @@
 	<!-- This is my config for mysql -->
 	<named-config name="mysql">
 		<property name="driverClass">com.mysql.jdbc.Driver</property>
+		<!-- <property name="jdbcUrl">jdbc:mysql://127.0.0.1:3306/searchinfo -->
+		<!-- </property> -->
+		<!-- <property name="user">root</property> -->
+		<!-- <property name="password">123</property> -->
 		<property name="jdbcUrl">jdbc:mysql://60.205.146.53:3306/tppt?&amp;characterEncoding=gbk
 		</property>
 		<property name="user">tppt</property>
 		<property name="password">feicui123A</property>
+
 		<property name="initialPoolSize">10</property>
 		<property name="maxIdleTime">30</property>
 		<property name="maxPoolSize">100</property>

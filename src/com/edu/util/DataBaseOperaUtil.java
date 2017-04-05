@@ -1,13 +1,11 @@
 package com.edu.util;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,30 +33,33 @@ public class DataBaseOperaUtil {
 		PreparedStatement ps = null;
 		// sql语句
 		String sql = "insert into " + Global.TAB_NAME
-				+ " (user_Id,large_Area,sch_Name,tea_Name,cus_Name,fill_Date,tea_Attendance,cls_Explain,cls_Quesions,ques_Answer,cls_Coach,cls_Discipline,cls_Skill,cls_Progress,exam_Explain,class_Homework,total_Score,stu_Advice,average)"
-				+ "value (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ " (user_Nick,user_Id,large_Area,sch_Name,tea_Name,role_Level,stu_Class,cus_Name,fill_Date,tea_Attendance,cls_Explain,cls_Quesions,ques_Answer,cls_Coach,cls_Discipline,cls_Skill,cls_Progress,exam_Explain,class_Homework,total_Score,stu_Advice,average)"
+				+ "value (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try {
 			// 获得PreparedStatement对象
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, bean.getUser_Id());
-			ps.setString(2, bean.getLarge_Area());
-			ps.setString(3, bean.getSch_Name());
-			ps.setString(4, bean.getTea_Name());
-			ps.setString(5, bean.getCus_Name());
-			ps.setString(6, bean.getFill_Date());
-			ps.setDouble(7, bean.getTea_Attendance());
-			ps.setDouble(8, bean.getCls_Explain());
-			ps.setDouble(9, bean.getCls_Quesions());
-			ps.setDouble(10, bean.getQues_Answer());
-			ps.setDouble(11, bean.getCls_Coach());
-			ps.setDouble(12, bean.getCls_Discipline());
-			ps.setDouble(13, bean.getCls_Skill());
-			ps.setDouble(14, bean.getCls_Progress());
-			ps.setDouble(15, bean.getExam_Explain());
-			ps.setDouble(16, bean.getClass_Homework());
-			ps.setDouble(17, bean.getTotal_Score());
-			ps.setString(18, bean.getStu_Advice());
-			ps.setDouble(19, bean.getAverage());
+			ps.setString(1, bean.getUser_Nick());// 用户昵称
+			ps.setString(2, bean.getUser_Id());
+			ps.setString(3, bean.getLarge_Area());
+			ps.setString(4, bean.getSch_Name());
+			ps.setString(5, bean.getTea_Name());
+			ps.setInt(6, bean.getRole_Level()); // 评论的角色
+			ps.setString(7, bean.getStu_Class()); // 班级编号
+			ps.setString(8, bean.getCus_Name());
+			ps.setString(9, bean.getFill_Date());
+			ps.setDouble(10, bean.getTea_Attendance());
+			ps.setDouble(11, bean.getCls_Explain());
+			ps.setDouble(12, bean.getCls_Quesions());
+			ps.setDouble(13, bean.getQues_Answer());
+			ps.setDouble(14, bean.getCls_Coach());
+			ps.setDouble(15, bean.getCls_Discipline());
+			ps.setDouble(16, bean.getCls_Skill());
+			ps.setDouble(17, bean.getCls_Progress());
+			ps.setDouble(18, bean.getExam_Explain());
+			ps.setDouble(19, bean.getClass_Homework());
+			ps.setDouble(20, bean.getTotal_Score());
+			ps.setString(21, bean.getStu_Advice());
+			ps.setDouble(22, bean.getAverage());
 			result = ps.executeUpdate();
 			System.out.println("插入数据库成功");
 		} catch (Exception e) {
@@ -72,44 +73,6 @@ public class DataBaseOperaUtil {
 	}
 
 	/**
-	 * 查询数据库是否已经插入过数据
-	 * 
-	 * @param bean
-	 * @return
-	 * @throws SQLException
-	 * @throws UnsupportedEncodingException
-	 */
-	public int chekResult(Investigation bean) throws SQLException, UnsupportedEncodingException {
-		int result = 0;
-		String sql = "select count(*) from " + Global.TAB_NAME + " where user_Id = '" + bean.getUser_Id()
-				+ "' and sch_Name = '" + bean.getSch_Name() + "' and tea_Name = '" + bean.getTea_Name()
-				+ "' and cus_Name = '" + bean.getCus_Name() + "'";
-		System.out.println(sql);
-		Connection conn = C3P0Util.getConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql); // 执行查询数据库的操作
-			if (rs.next()) {
-				result = rs.getInt(1);
-				System.out.println("检查数据已经存在");
-			} else {
-				System.out.println("检查数据已经存在");
-			}
-		} catch (Exception exception) {
-			exception.printStackTrace();
-			C3P0Util.close(conn, null, rs);
-			stmt.close();
-		} finally {
-			C3P0Util.close(conn, null, rs);
-			stmt.close();
-		}
-
-		return result;
-	}
-
-	/**
 	 * 检查是否已经投过票
 	 * 
 	 * @param bean
@@ -118,15 +81,11 @@ public class DataBaseOperaUtil {
 	 */
 	public int chekIsRepeat(Investigation bean) throws SQLException {
 		int result = 0;
-		String sql = "SELECT COUNT(*) FROM tab_researchinfo WHERE user_Id = '" + bean.getUser_Id()
-				+ "' and large_Area ='" + bean.getLarge_Area() + "' AND sch_Name = '" + bean.getSch_Name()
-				+ "' AND cus_Name = '" + bean.getCus_Name() + "' AND tea_Name = '" + bean.getTea_Name() + "'";
-
 		String sqlString = "SELECT * FROM tab_researchinfo WHERE user_Id = '" + bean.getUser_Id()
 				+ "' and large_Area = '" + bean.getLarge_Area() + "' AND sch_Name = '" + bean.getSch_Name()
 				+ "' and cus_Name = '" + bean.getCus_Name() + "' AND tea_Name = '" + bean.getTea_Name()
 				+ "' and date_format(fill_Date,'%Y-%m') = date_format('" + bean.getFill_Date() + "','%Y-%m')";
-		System.out.println(sqlString);
+		System.out.println("----查询本月是否已经投过的sql----->" + sqlString);
 		Connection conn = C3P0Util.getConnection();
 		Statement stmt = null;
 		ResultSet rSet = null;
@@ -151,6 +110,7 @@ public class DataBaseOperaUtil {
 	}
 
 	/**
+	 * 排名
 	 * 
 	 * @param large_Area
 	 *            大区
@@ -210,12 +170,12 @@ public class DataBaseOperaUtil {
 			if ("请选择".equals(selectBean.getMajor())) {
 				sql = "select * from " + Global.TAB_NAME + " where  fill_Date >= '" + selectBean.getStartDate()
 						+ "' and fill_Date<= '" + selectBean.getEndDate()
-						+ "' ORDER BY  large_Area ASC,sch_Name ASC,cus_Name ASC,total_Score DESC ";
+						+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC";
 			} else {
 				sql = "select * from " + Global.TAB_NAME + " where cus_Name = '" + selectBean.getMajor()
 						+ "' and fill_Date >= '" + selectBean.getStartDate() + "' and fill_Date<= '"
 						+ selectBean.getEndDate()
-						+ "' ORDER BY  large_Area ASC,sch_Name ASC,cus_Name ASC ,total_Score DESC";
+						+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC ";
 			}
 		} else {
 			if ("请选择".equals(selectBean.getSchName())) {
@@ -223,36 +183,28 @@ public class DataBaseOperaUtil {
 					sql = "select * from " + Global.TAB_NAME + " where large_Area = '" + selectBean.getLargeArea()
 							+ "' and fill_Date >= '" + selectBean.getStartDate() + "' and fill_Date<= '"
 							+ selectBean.getEndDate()
-							+ "' ORDER BY  large_Area ASC,sch_Name ASC,cus_Name ASC ,total_Score DESC";
+							+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC ";
 				} else {
 					sql = "select * from " + Global.TAB_NAME + " where large_Area = '" + selectBean.getLargeArea()
 							+ "' and sch_Name = '" + selectBean.getSchName() + "' and fill_Date >= '"
 							+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
-							+ "' ORDER BY  large_Area ASC,sch_Name ASC,cus_Name ASC ,total_Score DESC";
+							+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC ";
 				}
 			} else {
 				if ("请选择".equals(selectBean.getMajor())) {
 					sql = "select * from " + Global.TAB_NAME + " where large_Area = '" + selectBean.getLargeArea()
 							+ "' and sch_Name = '" + selectBean.getSchName() + "' and fill_Date >= '"
 							+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
-							+ "' ORDER BY  large_Area ASC,sch_Name ASC,cus_Name ASC,total_Score DESC";
+							+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC ";
 				} else {
 					sql = "select * from " + Global.TAB_NAME + " where large_Area = '" + selectBean.getLargeArea()
 							+ "' and sch_Name = '" + selectBean.getSchName() + "' and cus_Name = '"
 							+ selectBean.getMajor() + "' and fill_Date >= '" + selectBean.getStartDate()
 							+ "' and fill_Date<= '" + selectBean.getEndDate()
-							+ "' ORDER BY  large_Area ASC,sch_Name ASC,cus_Name ASC,total_Score DESC";
+							+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC ";
 				}
 			}
 		}
-
-		// sql = "select * from " + Global.TAB_NAME + " where large_Area = '" +
-		// selectBean.getLargeArea()
-		// + "' and sch_Name = '" + selectBean.getSchName() + "' and cus_Name =
-		// '" + selectBean.getMajor()
-		// + "' and fill_Date >= '" + selectBean.getStartDate() + "' and
-		// fill_Date<= '" + selectBean.getEndDate()
-		// + "'";
 		System.out.println(sql);
 		Connection conn = C3P0Util.getConnection();
 		Statement stmt = null;
@@ -264,6 +216,7 @@ public class DataBaseOperaUtil {
 			list = new ArrayList<Investigation>();
 			while (rs.next()) {
 				Investigation investigation = new Investigation();
+				investigation.setStu_Class(rs.getString("stu_Class"));
 				investigation.setLarge_Area(rs.getString("large_Area"));
 				investigation.setSch_Name(rs.getString("sch_Name"));
 				investigation.setTea_Name(rs.getString("tea_Name"));
@@ -310,42 +263,42 @@ public class DataBaseOperaUtil {
 		String sql = null;
 		if ("请选择".equals(selectBean.getLargeArea())) {
 			if ("请选择".equals(selectBean.getMajor())) {
-				sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where  fill_Date >= '"
+				sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class, COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where  fill_Date >= '"
 						+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
-						+ "' GROUP BY t.tea_Name,t.cus_Name ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+						+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 			} else {
-				sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where cus_Name = '"
+				sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class, COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where cus_Name = '"
 						+ selectBean.getMajor() + "' and fill_Date >= '" + selectBean.getStartDate()
 						+ "' and fill_Date<= '" + selectBean.getEndDate()
-						+ "' GROUP BY t.tea_Name,t.cus_Name ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+						+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 			}
 		} else {
 			if ("请选择".equals(selectBean.getSchName())) {
 				if ("请选择".equals(selectBean.getMajor())) {
-					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
+					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
 							+ selectBean.getLargeArea() + "' and fill_Date >= '" + selectBean.getStartDate()
 							+ "' and fill_Date<= '" + selectBean.getEndDate()
-							+ "' GROUP BY t.tea_Name,t.cus_Name ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				} else {
-					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
+					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
 							+ selectBean.getLargeArea() + "' and sch_Name = '" + selectBean.getSchName()
 							+ "' and fill_Date >= '" + selectBean.getStartDate() + "' and fill_Date<= '"
 							+ selectBean.getEndDate()
-							+ "' GROUP BY t.tea_Name,t.cus_Name ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				}
 			} else {
 				if ("请选择".equals(selectBean.getMajor())) {
-					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
+					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
 							+ selectBean.getLargeArea() + "' and sch_Name = '" + selectBean.getSchName()
 							+ "' and fill_Date >= '" + selectBean.getStartDate() + "' and fill_Date<= '"
 							+ selectBean.getEndDate()
-							+ "' GROUP BY t.tea_Name,t.cus_Name ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				} else {
-					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
+					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
 							+ selectBean.getLargeArea() + "' and sch_Name = '" + selectBean.getSchName()
 							+ "' and cus_Name = '" + selectBean.getMajor() + "' and fill_Date >= '"
 							+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
-							+ "' GROUP BY t.tea_Name,t.cus_Name ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				}
 			}
 		}
@@ -360,17 +313,18 @@ public class DataBaseOperaUtil {
 			list = new ArrayList<Investigation>();
 			while (rs.next()) {
 				Investigation investigation = new Investigation();
+				investigation.setStu_Class(rs.getString("stu_Class"));
 				investigation.setLarge_Area(rs.getString("large_Area"));
 				investigation.setSch_Name(rs.getString("sch_Name"));
 				investigation.setTea_Name(rs.getString("tea_Name"));
 				investigation.setCus_Name(rs.getString("cus_Name"));
 				investigation.setPeopleCount(rs.getInt("a"));
-				/*********设置四舍五入*********/
+				/********* 设置四舍五入 *********/
 				double average = rs.getDouble("b");
 				BigDecimal b = new BigDecimal(average);
 				double f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 				investigation.setAverage(f1);
-				/*********设置四舍五入*********/
+				/********* 设置四舍五入 *********/
 				list.add(investigation);
 			}
 		} catch (Exception exception) {
@@ -383,6 +337,57 @@ public class DataBaseOperaUtil {
 			stmt.close();
 		}
 		return list;
+	}
+
+	/**
+	 * 根据用户ID返回最近填写的班级和老师
+	 * 
+	 * @param unionid
+	 * @return
+	 */
+	public List<String> getRecentInputClass(String unionid) {
+		String sql = "SELECT DISTINCT t.stu_Class FROM " + Global.TAB_NAME + " t WHERE t.user_Id = '" + unionid + "'";
+		Connection conn = C3P0Util.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<String> classList = null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql); // 执行查询数据库的操作
+			classList = new ArrayList<String>();
+			while (rs.next()) {
+				classList.add(rs.getString("stu_Class"));
+			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+		return classList;
+	}
+	
+	
+	/**
+	 * 根据用户ID返回最近填写的班级和老师
+	 * 
+	 * @param unionid
+	 * @return
+	 */
+	public List<String> getRecentInputTeacher(String unionid) {
+		String sql = "SELECT DISTINCT t.tea_Name FROM " + Global.TAB_NAME + " t WHERE t.user_Id = '" + unionid + "'";
+		Connection conn = C3P0Util.getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<String> teacherList = null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql); // 执行查询数据库的操作
+			teacherList = new ArrayList<String>();
+			while (rs.next()) {
+				teacherList.add(rs.getString("tea_Name"));
+			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+		return teacherList;
 	}
 
 }

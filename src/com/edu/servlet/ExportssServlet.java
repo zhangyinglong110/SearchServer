@@ -52,8 +52,8 @@ public class ExportssServlet extends HttpServlet {
 		// String jsonArr = req.getParameter("exportss");
 		List<Investigation> exportList = (List<Investigation>) req.getSession().getAttribute("selectInfo");
 
-		String[] headName = { "大区", "校区", "教师姓名", "专业", "老师出勤", "项目讲解", "培训提问", "回答问题", "老师指导", "培训纪律", "讲解技巧", "培训进度",
-				"实例讲解", "培训后作品", "总分", "平均分", "学员建议" };
+		String[] headName = { "大区", "校区", "教师姓名", "专业", "班级", "老师出勤", "项目讲解", "培训提问", "回答问题", "老师指导", "培训纪律", "讲解技巧",
+				"培训进度", "实例讲解", "培训后作品", "总分", "平均分", "学员建议" };
 		// List<Investigation> exportList = new
 		// JsonUtil().getJsonExprossBean(jsonArr);
 		System.out.println(exportList.toString());
@@ -89,7 +89,7 @@ public class ExportssServlet extends HttpServlet {
 		cell_Style.setBorderTop(HSSFCellStyle.BORDER_THIN);// 上边框
 		cell_Style.setBorderRight(HSSFCellStyle.BORDER_THIN);// 右边框
 
-		String Column[] = { "large_Area", "sch_Name", "tea_Name", "cus_Name", "tea_Attendance", "cls_Explain",
+		String Column[] = { "large_Area", "sch_Name", "tea_Name", "cus_Name","stu_Class","tea_Attendance", "cls_Explain",
 				"cls_Quesions", "ques_Answer", "cls_Coach", "cls_Discipline", "cls_Skill", "cls_Progress",
 				"exam_Explain", "class_Homework", "total_Score", "average", "stu_Advice" };// 列id
 		ExportUtils.outputHeaders(headName, sheets, headerStyle);// 生成表头
@@ -98,7 +98,7 @@ public class ExportssServlet extends HttpServlet {
 		String path = req.getRealPath("/xlsx");
 		System.out.println("绝对路径path:" + path);
 		String filePath = path + "/" + dateString + ".xls";
-		System.out.println("文件路径："+filePath);
+		System.out.println("文件路径：" + filePath);
 		FileOutputStream fos = new FileOutputStream(filePath);
 		wb.write(fos);
 		fos.flush();

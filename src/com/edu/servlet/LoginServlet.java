@@ -1,8 +1,6 @@
 package com.edu.servlet;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Random;
 
 import javax.servlet.ServletException;
@@ -13,6 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.edu.global.Global;
 
+/**
+ * 微信授权登录的Servlet
+ * 
+ * @author Poppy(张应龙)
+ *
+ */
 @WebServlet(name = "LoginServlet", urlPatterns = "/LoginServlet")
 public class LoginServlet extends HttpServlet {
 

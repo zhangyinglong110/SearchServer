@@ -18,4 +18,23 @@
 		<url-pattern>/ExportssServlet</url-pattern>
 	</servlet-mapping>
 
+
+	<servlet>
+		<servlet-name>RecentInputServlet</servlet-name>
+		<servlet-class>com.edu.servlet.RecentInputServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>RecentInputServlet</servlet-name>
+		<url-pattern>/RecentInputServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>report</servlet-name>
+		<servlet-class>com.edu.servlet.ReportServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>report</servlet-name>
+		<url-pattern>/report</url-pattern>
+	</servlet-mapping>
 </web-app>

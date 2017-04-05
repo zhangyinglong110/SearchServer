@@ -16,15 +16,17 @@ public class Investigation {
 	// 校区名称
 	private String sch_Name;
 	// 班级编号
-	// private String cls_Num;
+	private String stu_Class;
+	// 角色(班主任、讲师)
+	private int role_Level;
+	// 用户的昵称
+	private String user_Nick;
 	// 教师姓名
 	private String tea_Name;
 	// 所授课程
 	private String cus_Name;
 	// 填表日期
 	private String fill_Date;
-	// 提交日期
-	// private Date sub_Date;
 	// 教师出勤
 	private double tea_Attendance;
 	// 课堂讲解
@@ -51,7 +53,7 @@ public class Investigation {
 	private String stu_Advice;
 	// 平均分
 	private double average;
-
+	// 投票的人数
 	private int peopleCount;
 
 	public int getUser_Num() {
@@ -269,6 +271,30 @@ public class Investigation {
 
 	public void setPeopleCount(int peopleCount) {
 		this.peopleCount = peopleCount;
+	}
+
+	public String getStu_Class() {
+		return stu_Class;
+	}
+
+	public void setStu_Class(String stu_Class) {
+		this.stu_Class = stu_Class;
+	}
+
+	public int getRole_Level() {
+		return role_Level;
+	}
+
+	public void setRole_Level(int role_Level) {
+		this.role_Level = role_Level;
+	}
+
+	public String getUser_Nick() {
+		return user_Nick;
+	}
+
+	public void setUser_Nick(String user_Nick) {
+		this.user_Nick = user_Nick;
 	}
 
 	@Override

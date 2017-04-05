@@ -16,17 +16,17 @@ import net.sf.json.JSONObject;
 public class JsonUtil {
 
 	/**
-	 * 接收前台页面传过来的数据
+	 * 用户评价完提交数据库
 	 * 
 	 * @param json
 	 * @return
 	 */
-	public Investigation getJsonBean(String json, String unionid) {
+	public Investigation getJsonBean(String json, String unionid, String nickname) {
 		Investigation bean = null;
 		if (unionid != null && json != null) {
 			bean = new Investigation();
 			JSONObject jsonObj = JSONObject.fromObject(json);
-			// String user_Id = jsonObj.getString("user_Id");
+
 			// 大区名称
 			String large_Area = jsonObj.getString("large_Area");
 			// 校区名称
@@ -35,6 +35,10 @@ public class JsonUtil {
 			String tea_Name = jsonObj.getString("tea_Name");
 			// 所授课程
 			String cus_Name = jsonObj.getString("cus_Name");
+			// 角色
+			int role_Level = jsonObj.getInt("role_Level");
+			// 班级编号
+			String stu_Class = jsonObj.getString("stu_Class");
 			// 填表日期
 			Date date = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -67,6 +71,9 @@ public class JsonUtil {
 			// 学员建议
 			String stu_Advice = jsonObj.getString("stu_Advice");
 
+			bean.setUser_Nick(nickname); // 用户昵称
+			bean.setRole_Level(role_Level);// 评论的角色
+			bean.setStu_Class(stu_Class);// 班级编号
 			bean.setUser_Id(unionid);
 			bean.setLarge_Area(large_Area);
 			bean.setSch_Name(sch_Name);
@@ -239,10 +246,12 @@ public class JsonUtil {
 	}
 
 	/**
-	 * 接收前台页面传过来的数据
+	 * 判断是否重复投票
 	 * 
 	 * @param json
-	 * @return
+	 *            传过来的条件以json的格式展示
+	 * @return Investigation 解析完的的数据对象
+	 * 
 	 */
 	public Investigation getCheckRepeatJson(String json, String unionid) {
 		Investigation bean = null;
@@ -268,7 +277,6 @@ public class JsonUtil {
 			bean.setTea_Name(tea_Name);
 			bean.setCus_Name(cus_Name);
 			bean.setFill_Date(fill_Date);
-			System.out.println(bean);
 		}
 		return bean;
 	}
