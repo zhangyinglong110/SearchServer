@@ -18,7 +18,7 @@ public class Investigation {
 	// 班级编号
 	private String stu_Class;
 	// 角色(班主任、讲师)
-	private int role_Level;
+	private String role_Level;
 	// 用户的昵称
 	private String user_Nick;
 	// 教师姓名
@@ -281,11 +281,11 @@ public class Investigation {
 		this.stu_Class = stu_Class;
 	}
 
-	public int getRole_Level() {
+	public String getRole_Level() {
 		return role_Level;
 	}
 
-	public void setRole_Level(int role_Level) {
+	public void setRole_Level(String role_Level) {
 		this.role_Level = role_Level;
 	}
 
@@ -299,7 +299,7 @@ public class Investigation {
 
 	@Override
 	public String toString() {
-		return tea_Name + ":" + sch_Name;
+		return tea_Name + ":" + sch_Name + ":" + role_Level;
 	}
 
 }

@@ -43,7 +43,7 @@ public class DataBaseOperaUtil {
 			ps.setString(3, bean.getLarge_Area());
 			ps.setString(4, bean.getSch_Name());
 			ps.setString(5, bean.getTea_Name());
-			ps.setInt(6, bean.getRole_Level()); // 评论的角色
+			ps.setString(6, bean.getRole_Level()); // 评论的角色
 			ps.setString(7, bean.getStu_Class()); // 班级编号
 			ps.setString(8, bean.getCus_Name());
 			ps.setString(9, bean.getFill_Date());
@@ -83,8 +83,9 @@ public class DataBaseOperaUtil {
 		int result = 0;
 		String sqlString = "SELECT * FROM tab_researchinfo WHERE user_Id = '" + bean.getUser_Id()
 				+ "' and large_Area = '" + bean.getLarge_Area() + "' AND sch_Name = '" + bean.getSch_Name()
-				+ "' and cus_Name = '" + bean.getCus_Name() + "' AND tea_Name = '" + bean.getTea_Name()
-				+ "' and date_format(fill_Date,'%Y-%m') = date_format('" + bean.getFill_Date() + "','%Y-%m')";
+				+ "' and role_Level = '" + bean.getRole_Level() + "'and cus_Name = '" + bean.getCus_Name()
+				+ "' and tea_Name = '" + bean.getTea_Name() + "' and date_format(fill_Date,'%Y-%m') = date_format('"
+				+ bean.getFill_Date() + "','%Y-%m')";
 		System.out.println("----查询本月是否已经投过的sql----->" + sqlString);
 		Connection conn = C3P0Util.getConnection();
 		Statement stmt = null;
@@ -166,42 +167,53 @@ public class DataBaseOperaUtil {
 	 */
 	public List<Investigation> getSelectInfo(SelectBean selectBean) throws SQLException {
 		String sql = null;
+		int role = 0;
+		if ("讲师".equals(selectBean.getRole_Level())) {
+			role = 0;
+		} else if ("班主任".equals(selectBean.getRole_Level())) {
+			role = 1;
+		} else {
+			role = 2;
+		}
+
 		if ("请选择".equals(selectBean.getLargeArea())) {
-			if ("请选择".equals(selectBean.getMajor())) {
-				sql = "select * from " + Global.TAB_NAME + " where  fill_Date >= '" + selectBean.getStartDate()
-						+ "' and fill_Date<= '" + selectBean.getEndDate()
-						+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC";
+			if ("请选择".equals(selectBean.getMajor())) {// 专业
+				sql = "SELECT * FROM tab_researchinfo t where  fill_Date >= '" + selectBean.getStartDate()
+						+ "' and role_Level = '" + role + "' and fill_Date<= '" + selectBean.getEndDate()
+						+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC";
 			} else {
-				sql = "select * from " + Global.TAB_NAME + " where cus_Name = '" + selectBean.getMajor()
-						+ "' and fill_Date >= '" + selectBean.getStartDate() + "' and fill_Date<= '"
-						+ selectBean.getEndDate()
-						+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC ";
+				sql = "SELECT * FROM tab_researchinfo t where cus_Name = '" + selectBean.getMajor()
+						+ "' and role_Level = '" + role + "'and fill_Date >= '" + selectBean.getStartDate()
+						+ "' and fill_Date<= '" + selectBean.getEndDate()
+						+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC";
 			}
 		} else {
 			if ("请选择".equals(selectBean.getSchName())) {
 				if ("请选择".equals(selectBean.getMajor())) {
-					sql = "select * from " + Global.TAB_NAME + " where large_Area = '" + selectBean.getLargeArea()
+					sql = "SELECT * FROM tab_researchinfo t where large_Area = '" + selectBean.getLargeArea()
+							+ "' and role_Level = '" + role + "' and  fill_Date >= '" + selectBean.getStartDate()
+							+ "' and fill_Date<= '" + selectBean.getEndDate()
+							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC";
+				} else {
+					sql = "SELECT * FROM tab_researchinfo t where large_Area = '" + selectBean.getLargeArea()
+							+ "' and role_Level = '" + role + "' and cus_Name = '" + selectBean.getMajor()
 							+ "' and fill_Date >= '" + selectBean.getStartDate() + "' and fill_Date<= '"
 							+ selectBean.getEndDate()
-							+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC ";
-				} else {
-					sql = "select * from " + Global.TAB_NAME + " where large_Area = '" + selectBean.getLargeArea()
-							+ "' and sch_Name = '" + selectBean.getSchName() + "' and fill_Date >= '"
-							+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
-							+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC ";
+							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC";
 				}
 			} else {
 				if ("请选择".equals(selectBean.getMajor())) {
-					sql = "select * from " + Global.TAB_NAME + " where large_Area = '" + selectBean.getLargeArea()
-							+ "' and sch_Name = '" + selectBean.getSchName() + "' and fill_Date >= '"
-							+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
-							+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC ";
+					sql = "SELECT * FROM tab_researchinfo t where large_Area = '" + selectBean.getLargeArea()
+							+ "' and sch_Name = '" + selectBean.getSchName() + "' and role_Level = '" + role
+							+ "' and fill_Date >= '" + selectBean.getStartDate() + "' and fill_Date<= '"
+							+ selectBean.getEndDate()
+							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC";
 				} else {
-					sql = "select * from " + Global.TAB_NAME + " where large_Area = '" + selectBean.getLargeArea()
-							+ "' and sch_Name = '" + selectBean.getSchName() + "' and cus_Name = '"
-							+ selectBean.getMajor() + "' and fill_Date >= '" + selectBean.getStartDate()
-							+ "' and fill_Date<= '" + selectBean.getEndDate()
-							+ "' ORDER BY  large_Area ASC,sch_Name ASC,tea_Name ASC,cus_Name ASC,total_Score DESC ";
+					sql = "SELECT * FROM tab_researchinfo t where large_Area = '" + selectBean.getLargeArea()
+							+ "' and sch_Name = '" + selectBean.getSchName() + "' and role_Level = '" + role
+							+ "' and cus_Name = '" + selectBean.getMajor() + "' and fill_Date >= '"
+							+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
+							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC";
 				}
 			}
 		}
@@ -218,6 +230,11 @@ public class DataBaseOperaUtil {
 				Investigation investigation = new Investigation();
 				investigation.setStu_Class(rs.getString("stu_Class"));
 				investigation.setLarge_Area(rs.getString("large_Area"));
+				if (rs.getString("role_Level").equals("0")) {
+					investigation.setRole_Level("讲师");
+				} else {
+					investigation.setRole_Level("班主任");
+				}
 				investigation.setSch_Name(rs.getString("sch_Name"));
 				investigation.setTea_Name(rs.getString("tea_Name"));
 				investigation.setCus_Name(rs.getString("cus_Name"));
@@ -261,43 +278,54 @@ public class DataBaseOperaUtil {
 	 */
 	public List<Investigation> getSelectInfo1(SelectBean selectBean) throws SQLException {
 		String sql = null;
+		int role = 0;
+		if ("讲师".equals(selectBean.getRole_Level())) {
+			role = 0;
+		} else if ("班主任".equals(selectBean.getRole_Level())) {
+			role = 1;
+		} else {
+			role = 2;
+		}
+
 		if ("请选择".equals(selectBean.getLargeArea())) {
-			if ("请选择".equals(selectBean.getMajor())) {
-				sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class, COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where  fill_Date >= '"
-						+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
+			if ("请选择".equals(selectBean.getMajor())) {// 专业
+				sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.role_Level,t.cus_Name,t.stu_Class, COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where  fill_Date >= '"
+						+ selectBean.getStartDate() + "' and role_Level = '" + role + "' and fill_Date<= '"
+						+ selectBean.getEndDate()
 						+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 			} else {
-				sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class, COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where cus_Name = '"
-						+ selectBean.getMajor() + "' and fill_Date >= '" + selectBean.getStartDate()
-						+ "' and fill_Date<= '" + selectBean.getEndDate()
+				sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.role_Level,t.cus_Name,t.stu_Class, COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where cus_Name = '"
+						+ selectBean.getMajor() + "' and role_Level = '" + role + "'and fill_Date >= '"
+						+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
 						+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 			}
 		} else {
 			if ("请选择".equals(selectBean.getSchName())) {
 				if ("请选择".equals(selectBean.getMajor())) {
-					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
-							+ selectBean.getLargeArea() + "' and fill_Date >= '" + selectBean.getStartDate()
-							+ "' and fill_Date<= '" + selectBean.getEndDate()
+					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.role_Level,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
+							+ selectBean.getLargeArea() + "' and role_Level = '" + role + "' and  fill_Date >= '"
+							+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
 							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				} else {
-					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
-							+ selectBean.getLargeArea() + "' and sch_Name = '" + selectBean.getSchName()
-							+ "' and fill_Date >= '" + selectBean.getStartDate() + "' and fill_Date<= '"
-							+ selectBean.getEndDate()
+					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.role_Level,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
+							+ selectBean.getLargeArea() + "' and role_Level = '" + role + "' and cus_Name = '"
+							+ selectBean.getMajor() + "' and fill_Date >= '" + selectBean.getStartDate()
+							+ "' and fill_Date<= '" + selectBean.getEndDate()
 							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				}
 			} else {
 				if ("请选择".equals(selectBean.getMajor())) {
-					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
+					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.role_Level,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
 							+ selectBean.getLargeArea() + "' and sch_Name = '" + selectBean.getSchName()
-							+ "' and fill_Date >= '" + selectBean.getStartDate() + "' and fill_Date<= '"
-							+ selectBean.getEndDate()
+							+ "' and role_Level = '" + role + "' and fill_Date >= '" + selectBean.getStartDate()
+							+ "' and fill_Date<= '" + selectBean.getEndDate()
 							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				} else {
-					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
+					sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.role_Level,t.cus_Name,t.stu_Class,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t where large_Area = '"
 							+ selectBean.getLargeArea() + "' and sch_Name = '" + selectBean.getSchName()
-							+ "' and cus_Name = '" + selectBean.getMajor() + "' and fill_Date >= '"
-							+ selectBean.getStartDate() + "' and fill_Date<= '" + selectBean.getEndDate()
+							+ "' and role_Level = '" + role + "' and cus_Name = '" + selectBean.getMajor()
+							+ "' and fill_Date >= '" + selectBean.getStartDate() + "' and fill_Date<= '"
+							+ selectBean.getEndDate()
 							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				}
 			}
@@ -315,6 +343,11 @@ public class DataBaseOperaUtil {
 				Investigation investigation = new Investigation();
 				investigation.setStu_Class(rs.getString("stu_Class"));
 				investigation.setLarge_Area(rs.getString("large_Area"));
+				if (rs.getString("role_Level").equals("0")) {
+					investigation.setRole_Level("讲师");
+				} else {
+					investigation.setRole_Level("班主任");
+				}
 				investigation.setSch_Name(rs.getString("sch_Name"));
 				investigation.setTea_Name(rs.getString("tea_Name"));
 				investigation.setCus_Name(rs.getString("cus_Name"));
@@ -363,8 +396,7 @@ public class DataBaseOperaUtil {
 		}
 		return classList;
 	}
-	
-	
+
 	/**
 	 * 根据用户ID返回最近填写的班级和老师
 	 * 

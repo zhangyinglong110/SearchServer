@@ -15,6 +15,9 @@ public class SelectBean {
 	// 建议
 	private String stuAdvice;
 
+	// 查询角色
+	private String role_Level;
+
 	public String getLargeArea() {
 		return largeArea;
 	}
@@ -61,6 +64,14 @@ public class SelectBean {
 
 	public void setStuAdvice(String stuAdvice) {
 		this.stuAdvice = stuAdvice;
+	}
+
+	public String getRole_Level() {
+		return role_Level;
+	}
+
+	public void setRole_Level(String role_Level) {
+		this.role_Level = role_Level;
 	}
 
 }

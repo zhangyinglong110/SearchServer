@@ -36,9 +36,10 @@ public class JsonUtil {
 			// 所授课程
 			String cus_Name = jsonObj.getString("cus_Name");
 			// 角色
-			int role_Level = jsonObj.getInt("role_Level");
+			String role_Level = jsonObj.getString("role_Level");
 			// 班级编号
 			String stu_Class = jsonObj.getString("stu_Class");
+			stu_Class = stu_Class.toUpperCase();
 			// 填表日期
 			Date date = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -119,7 +120,9 @@ public class JsonUtil {
 			String startDate = jsonObj.getString("startDate");
 			// 结束时间
 			String endDate = jsonObj.getString("endDate");
-
+			// 角色
+			String role = jsonObj.getString("role");
+			selectBean.setRole_Level(role);
 			selectBean.setLargeArea(largeArea);
 			selectBean.setSchName(schName);
 			selectBean.setMajor(cusName);
@@ -266,6 +269,8 @@ public class JsonUtil {
 			String tea_Name = jsonObj.getString("tea_Name");
 			// 所授课程
 			String cus_Name = jsonObj.getString("cus_Name");
+			// 角色
+			String role_Level = jsonObj.getString("role_Level");
 			// 填表日期
 			Date date = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -275,6 +280,7 @@ public class JsonUtil {
 			bean.setLarge_Area(large_Area);
 			bean.setSch_Name(sch_Name);
 			bean.setTea_Name(tea_Name);
+			bean.setRole_Level(role_Level);
 			bean.setCus_Name(cus_Name);
 			bean.setFill_Date(fill_Date);
 		}

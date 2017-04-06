@@ -1,4 +1,4 @@
-
+﻿
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -92,6 +92,16 @@
 						<option>游戏程序</option>
 					</select>
 				</div>
+
+				<div class="row left">
+					<span class="choiceText"><strong>角</strong>色：</span> <select
+						name="teacherrole" id="teacherrole">
+						<option>讲师</option>
+						<option>班主任</option>
+						<option>就业</option>
+					</select>
+				</div>
+
 				<div class="row left">
 					<span class="choicetxt">起始日期：</span> <input class="Wdate"
 						type="text" onclick="WdatePicker()" id="startDate"
@@ -117,6 +127,7 @@
 				<th>大区</th>
 				<th>校区</th>
 				<th>教师姓名</th>
+				<th>角色</th>
 				<th>专业</th>
 				<th>班级</th>
 				<th>投票人数</th>
@@ -149,10 +160,10 @@
 			url : url,
 			success : function(data) {
 				alert(data);
-				// /xlsx/20170331094622.xls  location.href = "/SearchServer/xlsx/" + data;
+				// /xlsx/20170331094622.xls  
+				//location.href = "/SearchServer/xlsx/" + data;
 				//location.href = 'http://tp.feicuiedu.com:8081/WebRoot/xlsx/'+data;
-				location.href = "/SearchServer/xlsx/" + data;
-				alert(data);
+				location.href = 'http://tp.feicuiedu.com:8081/WebRoot/xlsx/' + data;
 			},
 			error : function(err) {
 				alert('error');
@@ -172,6 +183,7 @@
 			"largeArea" : document.getElementById('large_Area').value,
 			"schName" : document.getElementById('sch_Name').value,
 			"cusName" : document.getElementById('major').value,
+			"role" : document.getElementById('teacherrole').value,
 			"startDate" : document.getElementById('startDate').value,
 			"endDate" : document.getElementById('endDate').value
 		};
@@ -202,6 +214,7 @@
 					$tr.append($td.clone().text(json[i].large_Area));
 					$tr.append($td.clone().text(json[i].sch_Name));
 					$tr.append($td.clone().text(json[i].tea_Name));
+					$tr.append($td.clone().text(json[i].role_Level));
 					$tr.append($td.clone().text(json[i].cus_Name));
 					$tr.append($td.clone().text(json[i].stu_Class));
 					$tr.append($td.clone().text(json[i].peopleCount));
