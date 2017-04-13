@@ -50,7 +50,7 @@ public class ExportssServlet extends HttpServlet {
 	 */
 	private void exportEXcel(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		List<Investigation> exportList = (List<Investigation>) req.getSession().getAttribute("selectInfo");
-		System.out.println("-----导出表格-->" + exportList.get(0).getRole_Level());
+		System.out.println(exportList);
 		if (exportList.get(0).getRole_Level().equals("讲师")) {
 			String[] headName1 = { "大区", "校区", "教师姓名", "角色", "专业", "班级", "老师出勤", "项目讲解", "培训提问", "回答问题", "老师指导", "培训纪律",
 					"讲解技巧", "培训进度", "实例讲解", "培训后作品", "总分", "平均分", "学员建议" };

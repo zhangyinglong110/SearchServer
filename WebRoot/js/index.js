@@ -1,4 +1,4 @@
-$(function(){
+﻿$(function(){
 	window.onload = function(){
 		document.documentElement.style.fontSize = document.documentElement.clientWidth/10.8 +'px';
 		var deviceWidth = document.documentElement.clientWidth;
@@ -135,20 +135,16 @@ $(function(){
 				traditional:true,
 				url:"recentServlet",
 				data: {
-					//checkJson: JSON.stringify(postdata)
 				},
 				async:true,
 				success: function(data){
 					resolve(data);
 				},
 				error: function(err){
-					//callback(null,err);
+					var tcs = '{"classList":[],"teacherName":[]}';
+					resolve(tcs);
 				}
 			});
-		// TODO
-		//			$.getJSON("recentServlet",function(tcs){
-		//				resolve(tcs);
-		//			});
 		});
 		
 		Promise.all([p0,p1,p2,p3]).then(function(results){
@@ -163,8 +159,25 @@ $(function(){
 			
 		});
 	})();
+
+	//去除数组中的空值
+	function deleteNulVal(array){
+		for(var i = 0 ;i<array.length;i++)
+	 	{
+            if(array[i] == "" || typeof(array[i]) == "undefined")
+            {
+                array.splice(i,1);
+                i= i-1;
+            }       
+	 	}
+	}
 	
 	function updateClassAndTeaName(tcs){
+		tcs = JSON.parse(tcs);
+		// 删除空值
+		deleteNulVal(tcs.classList);
+		// 反转数组
+		tcs.classList.reverse();
 		var classSpans = $(".classListOne span");
 		var min = Math.min(tcs.classList.length,classSpans.length);
 		for(var i=0;i<min;i++){
@@ -176,6 +189,8 @@ $(function(){
 				$(classSpans[i]).hide();
 			}
 		}
+		deleteNulVal(tcs.teacherName);
+		tcs.teacherName.reverse();
 		var teaNameSpans = $(".nameList span");
 		min = Math.min(tcs.teacherName.length,teaNameSpans.length);
 		for(var i=0;i<min;i++){
@@ -345,16 +360,16 @@ $(function(){
 		}else if(typeValue == "班主任"){
 			temp.role_Level = 1;
 		}
-		//tmp.role_Level = typeValue;
 		//得到班级的名字
 		temp.stu_Class=$("#classInput").val();
 		//得到教师的名字
 		temp.tea_Name = $("#uName").val();
 		var postdata = {
-			"large_Area": temp.large_Area,
-			"sch_Name": temp.sch_Name,
-			"cus_Name": temp.cus_Name,
-			"tea_Name": temp.tea_Name
+			"large_Area": temp.large_Area, // 大区字段
+			"sch_Name": temp.sch_Name, //学校字段
+			"cus_Name": temp.cus_Name, // 专业字段
+			"tea_Name": temp.tea_Name, // 老师姓名字段
+			"role_Level": temp.role_Level // 类型字段
 		};
 		postComment(postdata,function(isComment,err){
 			if(err){

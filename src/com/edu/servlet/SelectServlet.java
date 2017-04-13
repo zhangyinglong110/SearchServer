@@ -50,7 +50,7 @@ public class SelectServlet extends HttpServlet {
 			JSONArray jsonArray = JSONArray.fromObject(selectInfo1);
 			pw.println(jsonArray);
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

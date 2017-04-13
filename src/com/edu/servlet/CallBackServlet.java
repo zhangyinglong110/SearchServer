@@ -36,7 +36,8 @@ public class CallBackServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setCharacterEncoding("utf-8");
+		req.setCharacterEncoding("gbk");
+		resp.setCharacterEncoding("gbk");
 		String code = req.getParameter("code");
 		String state = req.getParameter("state");
 		// 控制台输出code和state
@@ -60,8 +61,11 @@ public class CallBackServlet extends HttpServlet {
 			System.out.println("---->CallServlet two token" + weiUseString);
 			WeiXinUserInfo weiXinUserInfo = new JsonUtil().getWeiXinUserInfo(weiUseString);
 			HttpSession session = req.getSession();
+			String nick = weiXinUserInfo.getNickname();
+			nick = new String(nick.getBytes("utf-8"), "gbk");
+			System.out.println("nicl----->" + nick);
 			session.setAttribute("unionid", weiChatInfo.getUnionid());
-			session.setAttribute("nickname", weiXinUserInfo.getNickname());
+			session.setAttribute("nickname", nick);
 			resp.sendRedirect("index.html");
 		} else {
 			System.out.println("CallBackServlet----->else条件");
