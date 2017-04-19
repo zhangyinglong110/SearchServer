@@ -33,16 +33,18 @@ public class CheckRepeatServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8");// 设置请求参数的编码
-		String checkJson = req.getParameter("checkJson");
-		System.out.println("CheckServlet传过来的条件---->" + checkJson);
 		resp.setCharacterEncoding("UTF-8");// 设置响应的编码格式
 		resp.setHeader("Access-Control-Allow-Origin", "*");
-		String unionid = (String) req.getSession().getAttribute("unionid"); // 获取到用户的ID
-		System.out.println("CheckServlet---unionid---->" + unionid);
-		Investigation beans = new JsonUtil().getCheckRepeatJson(checkJson, unionid);
+		String checkJson = req.getParameter("checkJson");
+		System.out.println("CheckServlet传过来的条件---->" + checkJson);
+		// String unionid = (String) req.getSession().getAttribute("unionid");
+		// // 获取到用户的ID
+		// String unionid = "1101";
+		// System.out.println("CheckServlet---unionid---->" + unionid);
+		Investigation beans = JsonUtil.getCheckRepeatJson(checkJson, null);
 		PrintWriter pw = resp.getWriter();
 		try {
-			int result = new DataBaseOperaUtil().chekIsRepeat(beans);
+			int result = DataBaseOperaUtil.chekIsRepeat(beans);
 			System.out.println("CheckServlet返回的数据库结果---->" + result);
 			// 还没评论
 			if (result == 0) {

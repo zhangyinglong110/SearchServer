@@ -39,8 +39,8 @@ public class SelectServlet extends HttpServlet {
 		String jsonString = req.getParameter("name");
 		System.out.println(jsonString);
 		try {
-			SelectBean selectBean = new JsonUtil().getJsonSelectJson(jsonString);
-			List<Investigation> selectInfo = new DataBaseOperaUtil().getSelectInfo1(selectBean);
+			SelectBean selectBean = JsonUtil.getJsonSelectJson(jsonString);
+			List<Investigation> selectInfo = DataBaseOperaUtil.getSelectInfo1(selectBean);
 			PrintWriter pw = resp.getWriter();
 			JSONArray jsonArray = JSONArray.fromObject(selectInfo);
 			pw.println(jsonArray);

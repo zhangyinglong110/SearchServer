@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>翡翠点评之终结者</title>
+<title>翡翠点评</title>
 <meta name="viewport"
 	content="initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="format-detection" content="telephone=no">
@@ -14,48 +14,59 @@
 
 </head>
 <body>
-
+	<div class="box">
+		<div class="cont">
+			<p class="info">谢谢</p>
+			<div class="yes">
+				<a href="#">确认</a>
+			</div>
+		</div>
+	</div>
 	<%
 		String unionid = (String) request.getSession().getAttribute("unionid");
-		//if (unionid == null) {
+		String nickname = (String) request.getSession().getAttribute("nickname");
+		if (unionid == null || nickname == null || "".equals(unionid) || "".equals(nickname)) {
 	%>
 	<script type="text/javascript">
-		//window.location.href = "LoginServlet";
+		window.location.href = "http://tp.feicuiedu.com:8081/";
 	</script>
 	<%
-		//} else {
+		} else {
 	%>
 	<div class="page page-1-1 page-current">
 		<div class="wrap headingContainer">
-			<!--<img class="bgPic" src="images/headingPage.jpg" alt=""/>-->
+			<img id="headerImg" src="images/headerImg.png" alt="满意度调查" />
 			<button type="button" class="headingBtn pt-page-moveCircle">进入</button>
 		</div>
 	</div>
 	<div class="page page-2-1 hide">
 		<div class="kuang">
 			<!--×号-->
-			<img class="modal-close-btn" src="images/close.png" alt="" />
+
+			<div>
+				<img class="modal-close-btn pt-page-moveCircle"
+					src="images/clear.png" alt="" />
+				<ul id="schools" class="pt-page-moveCircle"></ul>
+				<div id="confirm">确定</div>
+			</div>
 		</div>
 		<div class="wrap flex-container">
 			<h2 class="page-title">请选择您所在的区域：</h2>
 			<div class="bigContainer">
-				<div>
-					<ul id="schools" class="pt-page-moveCircle"></ul>
-					<div id="confirm">确定</div>
-				</div>
+
 				<div>
 					<div id="first"
-						class="flex-item left area pt-page-rotateUnfoldRight">京津冀</div>
-					<div id="second" class="flex-item area pt-page-rotateUnfoldRight">上海区</div>
+						class="flex-item left area pt-page-rotateUnfoldRight"></div>
+					<div id="second" class="flex-item area pt-page-rotateUnfoldRight"></div>
 					<div id="third"
-						class="flex-item left area pt-page-rotateUnfoldRight">西北区</div>
-					<div id="forth" class="flex-item area pt-page-rotateUnfoldRight">华中区</div>
+						class="flex-item left area pt-page-rotateUnfoldRight"></div>
+					<div id="forth" class="flex-item area pt-page-rotateUnfoldRight"></div>
 					<div id="fifth"
-						class="flex-item left area pt-page-rotateUnfoldLeft">华北区</div>
-					<div id="sixth" class="flex-item area pt-page-rotateUnfoldLeft">华南区</div>
+						class="flex-item left area pt-page-rotateUnfoldLeft"></div>
+					<div id="sixth" class="flex-item area pt-page-rotateUnfoldLeft"></div>
 					<div id="seventh"
-						class="flex-item left area pt-page-rotateUnfoldLeft">华东区</div>
-					<div id="eight" class="flex-item area pt-page-rotateUnfoldLeft">西南区</div>
+						class="flex-item left area pt-page-rotateUnfoldLeft"></div>
+					<div id="eight" class="flex-item area pt-page-rotateUnfoldLeft"></div>
 				</div>
 			</div>
 		</div>
@@ -64,55 +75,67 @@
 	<div class="page  page-3-1 hide">
 		<div class="wrap flex-container">
 			<h2 class="page-title">请选择您的专业：</h2>
-			<div class="flex-item left profession pt-page-rotateUnfoldRight">UI设计</div>
-			<div class="flex-item profession pt-page-rotateUnfoldRight">web前端</div>
-			<div class="flex-item left profession pt-page-rotateUnfoldRight">安卓</div>
-			<div class="flex-item profession pt-page-rotateUnfoldRight">网络营销</div>
-			<div class="flex-item left profession pt-page-rotateUnfoldLeft">java</div>
-			<div class="flex-item profession pt-page-rotateUnfoldLeft">php</div>
-
-			<!--<img  class="triangleIcon profession pt-page-moveIconUp" src="images/icon_up1.png">-->
+			<div class="flex-item left profession pt-page-rotateUnfoldRight"></div>
+			<div class="flex-item profession pt-page-rotateUnfoldRight"></div>
+			<div class="flex-item left profession pt-page-rotateUnfoldRight"></div>
+			<div class="flex-item profession pt-page-rotateUnfoldRight"></div>
+			<div class="flex-item left profession pt-page-rotateUnfoldLeft"></div>
+			<div class="flex-item profession pt-page-rotateUnfoldLeft"></div>
+			<div class="flex-item left profession pt-page-rotateUnfoldLeft"></div>
+			<div class="flex-item profession pt-page-rotateUnfoldLeft"></div>
 			<div class="professionBtn">确定</div>
 		</div>
 	</div>
-	<!--<div class="page  page-4-1 hide">
-		<div class="wrap">
-			<img class="inputPic pt-page-moveCircle " src="images/page23-3.png" alt=""/>
-			<h2 class="page-title">请选择您要评价的老师：</h2>
-			<div  class="flex-item post pt-page-rotateUnfoldRight">项目经理</div>
-			<div  class="flex-item post pt-page-rotateUnfoldRight">班主任</div>
-			<div  class="flex-item post pt-page-rotateUnfoldRight">就业经理</div>
-			&lt;!&ndash;<img  class="triangleIcon profession pt-page-moveIconUp" src="images/icon_up1.png">&ndash;&gt;
-			<div class="professioform-containernBtn">确定</div>
-		</div>
-	</div>-->
 	<div class="page  page-4-1 hide">
 		<div class="wrap flex-container">
-			<h2 class="page-title">请输入教师姓名：</h2>
-			<!--	<img class="inputPic pt-page-moveCircle " src="images/error1.png" alt=""/>-->
+			<h2 class="page-title">请输入以下信息：</h2>
+
 			<div class="form-container">
-				<input class="inp" id="uName" maxlength="5" name='uname' type="text"
-					placeholder="教师姓名" />
-				<div class="nameRemindWords"></div>
-				<div class="btn">确定</div>
+				<!--班级最大框-->
+				<div class="classContainer">
+					<div class="inputAndCloseBtn1">
+						<input id="classInput" class="inp" maxlength="15" type="text"
+							placeholder="班级" /> <span class="closeBtn1">X</span>
+					</div>
+					<div class="classList classListOne">
+						<span></span> <span></span> <span></span> <span></span> <span></span>
+						<span></span>
+					</div>
+				</div>
+				<!--班级最大框-->
+				<div class="nameContainer">
+					<div class="inputAndCloseBtn2">
+						<input id="uName" class="inp" maxlength="5" name='uname'
+							type="text" placeholder="教师姓名" /> <span class="closeBtn2 ">X</span>
+					</div>
+					<div class="classList nameList">
+						<span></span> <span></span> <span></span> <span></span> <span></span>
+						<span></span>
+					</div>
+				</div>
 			</div>
-			<!--<img class="triangleIcon pt-page-moveIconUp" src="images/icon_up1.png">-->
+			<div class="typechoise">
+				<label for="teacher"><input id="teacher" type="radio"
+					name="tachertype" value="讲师" checked="true" />讲师</label> <label
+					for="master"><input id="master" type="radio"
+					name="tachertype" value="班主任" style="margin-left: 30px;" />班主任</label>
+			</div>
+			<div class="btn">确定</div>
 		</div>
 	</div>
 	<div class="page page-5-1 hide" value="5">
 		<div class="wrap flex-container">
-			<h2 class="page-title">项目经理出勤情况：</h2>
+			<h2 class="page-title one"></h2>
 			<div class="pageChoice">
 				<input type="radio" name="attendance" id="alway" value="0" /> <label
-					for="alway">经常迟到早退 </label> <br /> <input type="radio"
-					name="attendance" id="sometimes" value="1" /> <label
-					for="sometimes">偶尔迟到早退 </label> <br /> <input type="radio"
-					name="attendance" id="nolate" value="2" /> <label for="nolate">从不迟到早退</label>
-				<br /> <input type="radio" name="attendance" id="always" value="3" />
-				<label for="always">不迟到，偶尔提前到项目组</label><br /> <input type="radio"
-					name="attendance" id="everyday" value="4" /> <label for="everyday">不迟到，而且经常提前到项目组</label>
-				<br /> <input type="radio" name="attendance" id="every" value="5" />
-				<label for="every">每天都提前到项目组</label>
+					for="alway"> </label> <br /> <input type="radio" name="attendance"
+					id="sometimes" value="1" /> <label for="sometimes"> </label> <br />
+				<input type="radio" name="attendance" id="nolate" value="2" /> <label
+					for="nolate"></label> <br /> <input type="radio" name="attendance"
+					id="always" value="3" /> <label for="always"></label><br /> <input
+					type="radio" name="attendance" id="everyday" value="4" /> <label
+					for="everyday"></label> <br /> <input type="radio"
+					name="attendance" id="every" value="5" /> <label for="every"></label>
 			</div>
 			<div class="nextQuestion" id="firstQuestion">下一题</div>
 			<div class="count">
@@ -122,18 +145,17 @@
 	</div>
 	<div class="page  page-6-1 hide" value="6">
 		<div class="wrap flex-container">
-			<h2 class="page-title">项目讲解：</h2>
+			<h2 class="page-title two"></h2>
 			<div class="pageChoice">
 				<input type="radio" name="onClass" id="noOrder" value="0" /> <label
-					for="noOrder">杂乱无章，听不懂</label> <br /> <input type="radio"
-					name="onClass" id="canBut" value="1" /> <label for="canBut">能听懂，但费力</label>
-				<br /> <input type="radio" name="onClass" id="canUnderstand"
-					value="2" /> <label for="canUnderstand">思路清晰但不深入</label> <br /> <input
-					type="radio" name="onClass" id="tuChu" value="3" /> <label
-					for="tuChu">重点难点突出</label> <br /> <input type="radio"
-					name="onClass" id="mindClear" value="4" /> <label for="mindClear">条理分明讲解清晰</label>
-				<br /> <input type="radio" name="onClass" id="bothClear" value="5" />
-				<label for="bothClear">讲解清晰有启发性</label><br />
+					for="noOrder"></label> <br /> <input type="radio" name="onClass"
+					id="canBut" value="1" /> <label for="canBut"></label> <br /> <input
+					type="radio" name="onClass" id="canUnderstand" value="2" /> <label
+					for="canUnderstand"></label> <br /> <input type="radio"
+					name="onClass" id="tuChu" value="3" /> <label for="tuChu"></label>
+				<br /> <input type="radio" name="onClass" id="mindClear" value="4" />
+				<label for="mindClear"></label> <br /> <input type="radio"
+					name="onClass" id="bothClear" value="5" /> <label for="bothClear"></label><br />
 			</div>
 			<div class="nextQuestion" id="secondQuestion">下一题</div>
 			<div class="count">
@@ -145,23 +167,45 @@
 		<div class="wrap flex-container">
 			<h2 class="page-title">您的宝贵建议和意见</h2>
 			<textarea name="" id="suggestions"></textarea>
-			<div class="lastSubmit pt-page-rotateInNewspaper">全部提交</div>
+			<div class="lastSubmit <!-- pt-page-rotateInNewspaper-->">全部提交</div>
 		</div>
 	</div>
-	<div class="page page-16-1 hide">
+	<!--<div class="page page-16-1 hide">
 		<div class="wrap">
-			<h1 id="bTit"
-				style="text-align: center;width: 100%;height: 5vh;line-height:5vh;margin-top: 2vh;">web前端排名</h1>
+			<h1 id="bTit" style="text-align: center;width: 100%;height: 5vh;line-height:5vh;margin-top: 2vh;">web前端排名</h1>
 			<div id="main" style="width:100%;height:88vh;"></div>
 		</div>
+	</div>-->
+	<!--<div class="page page-16-1 ">
+		<div class="wrap">
+			<img src="images/logo.png" style="margin: 0 auto;display:block;margin-top:30%;"/>
+			<p class="last-page" >谢谢参与</p>
+		</div>
+	</div>-->
+
+	<div class="page lastPage page-16-1 hide">
+		<div class="thankYouContainer">
+			<p class="thankYou">谢谢参与</p>
+		</div>
+		<div class="returnFirstPage">返回首页</div>
 	</div>
 	<script src="js/zepto.min.js"></script>
 	<script src="js/touch.js"></script>
-	<script src="js/echarts.simple.min.js"></script>
-	<script src="js/index2.js" type="text/javascript" charset="UTF-8"></script>
+	<script src="js/index.js" type="text/javascript" charset="UTF-8"></script>
+	<!--<script src="js/echarts.simple.min.js"></script>-->
 
+	<!--<script type="text/javascript">
+		var ua = navigator.userAgent.toLowerCase();
+		 var isWeixin = ua.indexOf('micromessenger') != -1;
+		 var isAndroid = ua.indexOf('android') != -1;
+		 var isIos = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);
+		 if (!isWeixin) {
+		 	document.head.innerHTML = '<title>抱歉，出错了</title><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0"><link rel="stylesheet" type="text/css" href="https://res.wx.qq.com/open/libs/weui/0.4.1/weui.css">';
+			document.body.innerHTML = '<div class="weui_msg"><div class="weui_icon_area"><i class="weui_icon_info weui_icon_msg"></i></div><div class="weui_text_area"><h4 class="weui_msg_title">请在微信客户端打开链接</h4></div></div>';
+		 }
+	</script>-->
 	<%
-		//}
+		}
 	%>
 </body>
 </html>

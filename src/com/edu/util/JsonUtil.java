@@ -1,5 +1,6 @@
 package com.edu.util;
 
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,12 +22,19 @@ public class JsonUtil {
 	 * @param json
 	 * @return
 	 */
-	public Investigation getJsonBean(String json, String unionid, String nickname) {
+	public static Investigation getJsonBean(String json, String unionid, String nickname) {
 		Investigation bean = null;
-		if (unionid != null && json != null) {
+		if (json != null) {
 			bean = new Investigation();
 			JSONObject jsonObj = JSONObject.fromObject(json);
+			String uid = jsonObj.getString("uid");
+			String nickNameString = jsonObj.getString("nickName");
 
+			try {
+				nickNameString = URLDecoder.decode(nickNameString, "UTF-8");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			// 大区名称
 			String large_Area = jsonObj.getString("large_Area");
 			// 校区名称
@@ -71,11 +79,11 @@ public class JsonUtil {
 			double average_Score = total_Score / 10;
 			// 学员建议
 			String stu_Advice = jsonObj.getString("stu_Advice");
-
-			bean.setUser_Nick(nickname); // 用户昵称
+			System.out.println("------>insert" + nickNameString);
+			bean.setUser_Nick(nickNameString); // 用户昵称
 			bean.setRole_Level(role_Level);// 评论的角色
 			bean.setStu_Class(stu_Class);// 班级编号
-			bean.setUser_Id(unionid);
+			bean.setUser_Id(uid);
 			bean.setLarge_Area(large_Area);
 			bean.setSch_Name(sch_Name);
 			bean.setTea_Name(tea_Name);
@@ -105,7 +113,7 @@ public class JsonUtil {
 	 * @param json
 	 * @return
 	 */
-	public SelectBean getJsonSelectJson(String json) {
+	public static SelectBean getJsonSelectJson(String json) {
 		SelectBean selectBean = null;
 		if (json != null) {
 			selectBean = new SelectBean();
@@ -145,7 +153,7 @@ public class JsonUtil {
 	 * @param json
 	 * @return
 	 */
-	public List<Investigation> getJsonExprossBean(String json) {
+	public static List<Investigation> getJsonExprossBean(String json) {
 		Investigation bean = null;
 		List<Investigation> list = null;
 		if (json != null) {
@@ -185,7 +193,7 @@ public class JsonUtil {
 	 * 
 	 * @return
 	 */
-	public WeiChatInfo getWeiChat(String jsonString) {
+	public static WeiChatInfo getWeiChat(String jsonString) {
 		WeiChatInfo weiChat = null;
 		try {
 			if (jsonString != null) {
@@ -217,7 +225,7 @@ public class JsonUtil {
 	 * 
 	 * @return
 	 */
-	public WeiXinUserInfo getWeiXinUserInfo(String weiXinJson) {
+	public static WeiXinUserInfo getWeiXinUserInfo(String weiXinJson) {
 		WeiXinUserInfo weiXinUserInfo = null;
 		try {
 			if (weiXinJson != null) {
@@ -256,9 +264,9 @@ public class JsonUtil {
 	 * @return Investigation 解析完的的数据对象
 	 * 
 	 */
-	public Investigation getCheckRepeatJson(String json, String unionid) {
+	public static Investigation getCheckRepeatJson(String json, String unionid) {
 		Investigation bean = null;
-		if (unionid != null && json != null) {
+		if (json != null) {
 			bean = new Investigation();
 			JSONObject jsonObj = JSONObject.fromObject(json);
 			// 大区名称
@@ -271,6 +279,8 @@ public class JsonUtil {
 			String cus_Name = jsonObj.getString("cus_Name");
 			// 角色
 			String role_Level = jsonObj.getString("role_Level");
+
+			String uid = jsonObj.getString("uid");
 			// 填表日期
 			Date date = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -283,6 +293,7 @@ public class JsonUtil {
 			bean.setRole_Level(role_Level);
 			bean.setCus_Name(cus_Name);
 			bean.setFill_Date(fill_Date);
+			bean.setUser_Id(uid);
 		}
 		return bean;
 	}

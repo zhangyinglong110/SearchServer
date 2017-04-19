@@ -27,7 +27,7 @@ public class DataBaseOperaUtil {
 	 * @param bean
 	 * @return
 	 */
-	public int insertData(Investigation bean) {
+	public static int insertData(Investigation bean) {
 		int result = 0; // 插入数据库后返回的结果
 		Connection conn = C3P0Util.getConnection();// 获取数据库的链接
 		PreparedStatement ps = null;
@@ -79,9 +79,9 @@ public class DataBaseOperaUtil {
 	 * @return
 	 * @throws SQLException
 	 */
-	public int chekIsRepeat(Investigation bean) throws SQLException {
+	public static int chekIsRepeat(Investigation bean) throws SQLException {
 		int result = 0;
-		String sqlString = "SELECT * FROM tab_researchinfo WHERE user_Id = '" + bean.getUser_Id()
+		String sqlString = "SELECT count(1) FROM tab_researchinfo WHERE user_Id = '" + bean.getUser_Id()
 				+ "' and large_Area = '" + bean.getLarge_Area() + "' AND sch_Name = '" + bean.getSch_Name()
 				+ "' and role_Level = '" + bean.getRole_Level() + "'and cus_Name = '" + bean.getCus_Name()
 				+ "' and tea_Name = '" + bean.getTea_Name() + "' and date_format(fill_Date,'%Y-%m') = date_format('"
@@ -100,9 +100,9 @@ public class DataBaseOperaUtil {
 			e.printStackTrace();
 		} finally {
 			try {
-				conn.close();
 				rSet.close();
 				stmt.close();
+				conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -120,7 +120,7 @@ public class DataBaseOperaUtil {
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<Investigation> queryRanking(String large_Area, String cus_Name) throws SQLException {
+	public static List<Investigation> queryRanking(String large_Area, String cus_Name) throws SQLException {
 		String sql = "SELECT A.large_Area,A.sch_Name,A.cus_Name,A.tea_Name,SUM(A.average)/COUNT(1) b from "
 				+ Global.TAB_NAME + " A where A.large_Area = '" + large_Area
 				+ "' GROUP BY A.tea_Name,A.large_Area,A.sch_Name,A.cus_Name ORDER BY b desc;";
@@ -165,7 +165,7 @@ public class DataBaseOperaUtil {
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<Investigation> getSelectInfo(SelectBean selectBean) throws SQLException {
+	public static List<Investigation> getSelectInfo(SelectBean selectBean) throws SQLException {
 		String sql = "SELECT * FROM tab_researchinfo t";
 		int role = 0;
 		if ("讲师".equals(selectBean.getRole_Level())) {
@@ -277,7 +277,7 @@ public class DataBaseOperaUtil {
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<Investigation> getSelectInfo1(SelectBean selectBean) throws SQLException {
+	public static List<Investigation> getSelectInfo1(SelectBean selectBean) throws SQLException {
 		String sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.role_Level,t.cus_Name,t.stu_Class,t.tea_Attendance,t.cls_Explain,t.cls_Quesions,t.ques_Answer,t.cls_Coach,t.cls_Discipline,t.cls_Skill,t.cls_Progress,t.exam_Explain,t.class_Homework,t.total_Score,t.average,t.stu_Advice,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t ";
 		int role = 0;
 		if ("讲师".equals(selectBean.getRole_Level())) {
@@ -531,7 +531,7 @@ public class DataBaseOperaUtil {
 	 * @param unionid
 	 * @return
 	 */
-	public List<String> getRecentInputClass(String unionid) {
+	public static List<String> getRecentInputClass(String unionid) {
 		String sql = "SELECT DISTINCT t.stu_Class FROM " + Global.TAB_NAME + " t WHERE t.user_Id = '" + unionid + "'";
 		Connection conn = C3P0Util.getConnection();
 		Statement stmt = null;
@@ -556,7 +556,7 @@ public class DataBaseOperaUtil {
 	 * @param unionid
 	 * @return
 	 */
-	public List<String> getRecentInputTeacher(String unionid) {
+	public static List<String> getRecentInputTeacher(String unionid) {
 		String sql = "SELECT DISTINCT t.tea_Name FROM " + Global.TAB_NAME + " t WHERE t.user_Id = '" + unionid + "'";
 		Connection conn = C3P0Util.getConnection();
 		Statement stmt = null;

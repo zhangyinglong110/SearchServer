@@ -31,27 +31,28 @@ public class InsertSer extends HttpServlet {
 		req.setCharacterEncoding("UTF-8");
 
 		String jsonStirng = req.getParameter("name");// 获取插入数据的json
-		String unionid = (String) req.getSession().getAttribute("unionid");
-		String nickname = (String) req.getSession().getAttribute("nickname");
-
+		// String unionid = (String) req.getSession().getAttribute("unionid");
+		// String nickname = (String) req.getSession().getAttribute("nickname");
+		// String unionid = "1101";
+		// String nickname="张三";
 		System.out.println(jsonStirng);
-		System.out.println("insert unionid----->" + unionid);
-		System.out.println("insert nickname----->" + nickname);
+		// System.out.println("insert unionid----->" + unionid);
+		// System.out.println("insert nickname----->" + nickname);
 
 		PrintWriter pw = resp.getWriter();// 响应服务器对象
 
-		if ("".equals(unionid) || unionid == null || "".equals(jsonStirng) || jsonStirng == null) {
+		if ("".equals(jsonStirng) || jsonStirng == null) {
 			pw.println("登录信息不全！");
 		} else {
 			// 获取解析完的数据
-			Investigation beanData = new JsonUtil().getJsonBean(jsonStirng, unionid, nickname);
+			Investigation beanData = JsonUtil.getJsonBean(jsonStirng, null, null);
 			// 检查数据库是否存在数据
 			int checkResult;
 			try {
-				checkResult = new DataBaseOperaUtil().chekIsRepeat(beanData);
+				checkResult = DataBaseOperaUtil.chekIsRepeat(beanData);
 				if (checkResult == 0) {
 					// 执行插入数据库操作
-					int inserResult = new DataBaseOperaUtil().insertData(beanData);
+					int inserResult = DataBaseOperaUtil.insertData(beanData);
 					if (inserResult > 0) {
 						pw.println(200);
 					} else {
