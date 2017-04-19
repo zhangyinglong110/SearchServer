@@ -2,6 +2,7 @@ package com.edu.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -36,14 +37,13 @@ public class CallBackServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.setCharacterEncoding("gbk");
-		resp.setCharacterEncoding("gbk");
+		resp.setCharacterEncoding("UTF-8");
+		req.setCharacterEncoding("UTF-8");
+
 		String code = req.getParameter("code");
 		String state = req.getParameter("state");
 		// 控制台输出code和state
 		System.out.println("redirct code-->" + code + ",redirct state-->" + state);
-		String randomValue = (String) req.getSession().getAttribute("randomValue");
-		System.out.println("CallBackServlet--randomValue--->" + randomValue);
 		if (code != null && state != null) {
 			req.getSession().removeAttribute("randomValue");
 			// 第一个URL地址
@@ -62,8 +62,10 @@ public class CallBackServlet extends HttpServlet {
 			WeiXinUserInfo weiXinUserInfo = new JsonUtil().getWeiXinUserInfo(weiUseString);
 			HttpSession session = req.getSession();
 			String nick = weiXinUserInfo.getNickname();
-			nick = new String(nick.getBytes("utf-8"), "gbk");
-			System.out.println("nicl----->" + nick);
+			if (null == nick || "".equals(nick)) {
+				nick = "昵称";
+			}
+			System.out.println("nick----->" + nick);
 			session.setAttribute("unionid", weiChatInfo.getUnionid());
 			session.setAttribute("nickname", nick);
 			resp.sendRedirect("index.html");
@@ -86,13 +88,17 @@ public class CallBackServlet extends HttpServlet {
 			URL realUrl = new URL(url);
 			URLConnection connection = realUrl.openConnection();
 			connection.setReadTimeout(5000);
+			connection.setRequestProperty("contentType", "UTF-8");
 			connection.connect();// 建立连接
+			InputStream inStream = connection.getInputStream();
 			// 定义 BufferedReader输入流来读取URL的响应
-			in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String line;
+			in = new BufferedReader(new InputStreamReader(inStream, "UTF-8"));
+			StringBuffer buffer = new StringBuffer();
+			String line = "";
 			while ((line = in.readLine()) != null) {
-				result += line;
+				buffer.append(line);
 			}
+			result = buffer.toString();
 		} catch (Exception e) {
 			System.out.println("发送GET请求出现异常！" + e);
 			e.printStackTrace();

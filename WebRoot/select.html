@@ -118,7 +118,8 @@
 				<button type="button" class=" outPutBtn" value="导出" id="exportss"
 					onclick="exportssTab(form2)" style="visibility: hidden;">导出明细</button>
 			</div>
-			<p style="color: #FF0000; font-size:16px; text-align: right;padding-bottom:5px">使用过程中如有问题，请邮件反馈至&nbsp;&nbsp;yanxing@feicuiedu.com</p>
+			<p
+				style="color: #FF0000; font-size:16px; text-align: right;padding-bottom:5px">使用过程中如有问题，请邮件反馈至&nbsp;&nbsp;yanxing@feicuiedu.com</p>
 		</form>
 	</div>
 	<!--表格-->
@@ -150,21 +151,29 @@
 </body>
 <script>
 	function exportssTab(form2) {
+		var conditionData = {
+			"largeArea" : document.getElementById('large_Area').value,
+			"schName" : document.getElementById('sch_Name').value,
+			"cusName" : document.getElementById('major').value,
+			"role" : document.getElementById('teacherrole').value,
+			"startDate" : document.getElementById('startDate').value,
+			"endDate" : document.getElementById('endDate').value
+		};
 		var url = "ExportssServlet";
 		$.ajax({
 			async : false,
 			method : "POST",
 			traditional : false,
 			data : {
-				//exportss : ""
+				name : JSON.stringify(conditionData)
 			},
 			url : url,
 			success : function(data) {
 				alert(data);
-				// /xlsx/20170331094622.xls  
 				location.href = "/SearchServer/xlsx/" + data;
 				//location.href = 'http://tp.feicuiedu.com:8081/WebRoot/xlsx/'+data;
 				//location.href = 'http://tp.feicuiedu.com:8081/WebRoot/xlsx/' + data;
+
 			},
 			error : function(err) {
 				alert('error');

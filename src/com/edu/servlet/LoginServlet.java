@@ -34,7 +34,6 @@ public class LoginServlet extends HttpServlet {
 		String randomValue = random.nextInt() + "";
 		// 控制台输出生成的state
 		System.out.println("生成的state-->" + randomValue);
-		req.getSession().setAttribute("randomValue", randomValue);
 		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + Global.APP_ID
 				+ "&redirect_uri=http%3A%2F%2Ftp.feicuiedu.com%3A8081%2FWebRoot%2FcallBackServlet&response_type=code&scope=snsapi_login&state="
 				+ randomValue + "#wechat_redirect";
