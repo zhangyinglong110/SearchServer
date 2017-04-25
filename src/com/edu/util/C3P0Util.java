@@ -37,11 +37,13 @@ public class C3P0Util {
 	 */
 	public static Connection getConnection() {
 		try {
-			System.out.println("数据库连接成功！");
-			return cpds.getConnection();
+			Connection conn = cpds.getConnection();
+			if(conn!=null){
+				Log4j.info(C3P0Util.class, "数据库连接成功！");
+			}
+			return conn;
 		} catch (SQLException e) {
-			System.out.println("数据库连接异常！");
-			e.printStackTrace();
+			Log4j.error(C3P0Util.class, "数据库连接异常！:"+e.getMessage());
 			return null;
 		}
 	}
