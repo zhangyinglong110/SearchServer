@@ -63,19 +63,25 @@ public class ZoneServletServlet extends HttpServlet {
 	 * @throws IOException
 	 */
 	private void getSchName(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		req.setCharacterEncoding("UTF-8");
 		resp.setCharacterEncoding("UTF-8");// 设置响应的编码格式
+		PrintWriter out = resp.getWriter();
 		String result = "";
 		String selLargeArea = req.getParameter("parLargeArea"); // 获取选择的大区
 		CityMap cityMap = new CityMap(); // 实例化保存省份信息的CityMap类的实例
 		Map<String, String[]> map = cityMap.model; // 获取省份信息保存到Map中
 		String[] arrSchName = map.get(selLargeArea); // 获取指定键的值
-		for (int i = 0; i < arrSchName.length; i++) { // 将获取的市县连接为一个以逗号分隔的字符串
-			result = result + arrSchName[i] + ",";
+		if (arrSchName != null) {
+			for (int i = 0; i < arrSchName.length; i++) { // 将获取的市县连接为一个以逗号分隔的字符串
+				result = result + arrSchName[i] + ",";
+			}
+			result = result.substring(0, result.length() - 1); // 去除最后一个逗号
+			resp.setContentType("text/html");
+			out.print(result); // 输出获取的市县字符串
+		} else {
+			resp.setContentType("text/html");
+			out.print("加载错误,F5刷新重试！"); // 输出获取的市县字符串
 		}
-		result = result.substring(0, result.length() - 1); // 去除最后一个逗号
-		resp.setContentType("text/html");
-		PrintWriter out = resp.getWriter();
-		out.print(result); // 输出获取的市县字符串
 		out.flush();
 		out.close();
 

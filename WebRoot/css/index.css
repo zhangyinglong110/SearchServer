@@ -43,6 +43,45 @@ body{
 	line-height: 270%;
 }
 
+.rotatebox{
+	z-index: 100;
+    position: fixed;  
+    width: 100%;  
+    height: 100%;  
+    background: rgba(0,0,0,0.2);  
+	display: block;
+    text-align: center;
+    display: none;
+}
+
+.rotatecont{  
+    width: 60%;  
+    height: 15%; 
+    margin:50% auto; 
+    background-color: #FFFFFF;
+    border: 1px solid #ccc;
+	border-radius: 5px;
+}
+
+.rotateImg{
+	display: inline-block;
+	margin: 0 auto;
+	margin-top: 14%;
+	width: 25px;
+	height: 25px;
+	border: 5px solid green;
+	border-left-color: red;
+	border-right-color: black;
+	border-top-color: yellow;
+	border-radius: 50%;
+	-webkit-animation:circle 1s infinite linear;
+}
+@-webkit-keyframes circle{
+	0%{ transform: rotate(0deg); }
+	100%{ transform: rotate(-360deg); }
+}
+
+
 .headingContainer{
 	position:relative;
 	width:100%;
@@ -72,7 +111,7 @@ body{
 	cursor: pointer;
 }
 
-/**遮罩层**/
+/**閬僵灞�**/
 .kuang{
 	width:100%;
 	height:100%;
@@ -82,7 +121,7 @@ body{
 	display:none;
 	position:absolute;
 }
-/**学校**/
+/**瀛︽牎**/
 #schools{
 	width:85%;
 	height:60%;
@@ -317,7 +356,7 @@ body{
 	margin-top: 15%;
 }
 
-/**班级列表**/
+/**鐝骇鍒楄〃**/
 .classList{
 	width:100%;
 }
@@ -337,7 +376,7 @@ body{
 	margin:2px;
 	padding:5px 10px;
 	background-color: #d0f7c1;
-	font:20px/20px "幼圆","楷体","宋体",Arial,sans-serif;
+	font:20px/20px "骞煎渾","妤蜂綋","瀹嬩綋",Arial,sans-serif;
 	text-align:center;
 	cursor:pointer;
 }
@@ -429,7 +468,7 @@ label{
 	width:90%;
 	overflow:hidden;
 	color:#000;
-	font-family:楷体;
+	font-family:妤蜂綋;
 }
 .textRemindWord{
 	padding-left:10%;
@@ -474,3 +513,4 @@ label{
 	font-size:0.7rem;
 	cursor: pointer;
 }
+

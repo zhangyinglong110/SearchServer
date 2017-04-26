@@ -22,17 +22,14 @@
 			</div>
 		</div>
 	</div>
-	<%
-		String unionid = (String) request.getSession().getAttribute("unionid");
-		String nickname = (String) request.getSession().getAttribute("nickname");
-		if (unionid == null || nickname == null || "".equals(unionid) || "".equals(nickname)) {
-	%>
-	<script type="text/javascript">
-		window.location.href = "http://tp.feicuiedu.com:8081/";
-	</script>
-	<%
-		} else {
-	%>
+	<!--数据加载过程中显示的旋转动画-->
+	<div class="rotatebox">
+		<div class="rotatecont">
+			<div class="rotateImg"></div>
+			<p>正在提交数据.....</p>
+		</div>
+	</div>
+	
 	<div class="page page-1-1 page-current">
 		<div class="wrap headingContainer">
 			<img id="headerImg" src="images/headerImg.png" alt="满意度调查" />
@@ -95,8 +92,9 @@
 				<div class="classContainer">
 					<div class="inputAndCloseBtn1">
 						<input id="classInput" class="inp" maxlength="15" type="text"
-							placeholder="班级" /> <span class="closeBtn1">X</span>
+							placeholder="班级简称" /> <span class="closeBtn1">X</span>
 					</div>
+					<div class="nameRemindWords"></div>
 					<div class="classList classListOne">
 						<span></span> <span></span> <span></span> <span></span> <span></span>
 						<span></span>
@@ -204,8 +202,6 @@
 			document.body.innerHTML = '<div class="weui_msg"><div class="weui_icon_area"><i class="weui_icon_info weui_icon_msg"></i></div><div class="weui_text_area"><h4 class="weui_msg_title">请在微信客户端打开链接</h4></div></div>';
 		 }
 	</script>-->
-	<%
-		}
-	%>
+	
 </body>
 </html>

@@ -342,7 +342,7 @@ $(function() {
 	//判断输入的字符是否满足要求
 	function isMatch() {
 		var user = $("#uName").val();
-		var patten = new RegExp("^([\u4E00-\u9FA5]{2,4})$");
+		var patten = new RegExp("^([\u4E00-\u9FA5]{2,5})$");
 		return patten.test(user);
 	}
 	//隐藏弹框
@@ -354,6 +354,14 @@ $(function() {
 		$('.info').text(info);
 		$('.box').show();
 	}
+	// 隐藏旋转动画
+	function hideRotatebox(){
+		$('.rotatebox').hide();
+	}
+	// 显示旋转动画
+	function showRotatebox(){
+		$('.rotatebox').show();
+	}
 	//点击确定隐藏弹框
 	$(".cont .yes").on("click", function() {
 		hidebox();
@@ -363,37 +371,100 @@ $(function() {
 		var classInputVal = $("#classInput").val();
 		var taValue = $("#uName").val();
 		var len = getCharSize(taValue);
-		if (len >= 4 && len <= 8 && isMatch() && classInputVal != "") {
+		if (len >= 4 && len <= 10 && isMatch() && classInputVal != "") {
 			$(".btn").css("background", "#14c6d0");
 			//解绑点击事件
-			$(".btn").unbind();
-			$(".btn").click(lightBtnAndAjax);
+			/*$(".btn").unbind();
+			$(".btn").click(lightBtnAndAjax);*/
 
 		} else if (len < 4 || !isMatch()) {
 			$(".btn").css("background", "#ccc");
 			//解绑点击事件
-			$(".btn").unbind();
+			//$(".btn").unbind();
 		}
 	});
 
+	
 	$("#classInput").bind("input propertychange", function() {
 		if ($("#classInput").val() == "") {
 			$(".btn").css("background", "#ccc");
 			//解绑点击事件
-			$(".btn").unbind();
+			//$(".btn").unbind();
 		} else {
 			var taValue = $("#uName").val();
 			var len = getCharSize(taValue);
-			if (len >= 4 && len <= 8 && isMatch()) {
+			if (len >= 4 && len <= 10 && isMatch()) {
 				$(".btn").css("background", "#14c6d0");
 				//解绑点击事件
-				$(".btn").unbind();
-				$(".btn").click(lightBtnAndAjax);
+				/*$(".btn").unbind();
+				$(".btn").click(lightBtnAndAjax);*/
 			}
 		}
 	});
+	
+	
+	/*$("#uName").on("blur", function() {
+		var taValue = $("#uName").val();
+		var len = getCharSize(taValue);
+		var classInputVal = $("#classInput").val();
+		if(classInputVal==""){
+			$(".nameRemindWords").text("班级简称不能为空").css({"font-size":"14px","color":"#f00"});
+			$(".btn").css("background", "#ccc");
+			//解绑点击事件
+			$(".btn").unbind();
+			return;
+		}
+		if(taValue==""){
+			$(".nameRemindWords").text("教师姓名不能为空").css({"font-size":"14px","color":"#f00"});
+			$(".btn").css("background", "#ccc");
+			//解绑点击事件
+			$(".btn").unbind();
+			return;
+		}
+		if(len < 4 || len > 10 || !isMatch()){
+			$(".nameRemindWords").text("请输入2~5个中文字，不包括特殊字符和空格").css({"font-size":"14px","color":"#f00"});
+			$(".btn").css("background", "#ccc");
+			//解绑点击事件
+			$(".btn").unbind();
+			return;
+		}
+		if (len >= 4 && len <= 10 && isMatch() && classInputVal != "") {
+			$(".nameRemindWords").text("");
+			$(".btn").css("background", "#14c6d0");
+			//解绑点击事件
+			$(".btn").unbind();
+			$(".btn").click(lightBtnAndAjax);
+		}
+	});*/
 
 	function lightBtnAndAjax() {
+		var taValue = $("#uName").val();
+		var len = getCharSize(taValue);
+		var classInputVal = $("#classInput").val();
+		if(classInputVal==""){
+			$(".nameRemindWords").text("班级简称不能为空").css({"font-size":"14px","color":"#f00"});
+			$(".btn").css("background", "#ccc");
+			//解绑点击事件
+			//$(".btn").unbind();
+			return;
+		}
+		if(taValue==""){
+			$(".nameRemindWords").text("教师姓名不能为空").css({"font-size":"14px","color":"#f00"});
+			$(".btn").css("background", "#ccc");
+			//解绑点击事件
+			//$(".btn").unbind();
+			return;
+		}
+		if(len < 4 || len > 10 || !isMatch()){
+			$(".nameRemindWords").text("请输入2~5个中文字，不包括特殊字符和空格").css({"font-size":"14px","color":"#f00"});
+			$(".btn").css("background", "#ccc");
+			//解绑点击事件
+			//$(".btn").unbind();
+			return;
+		}
+		
+		
+		$(".nameRemindWords").text("");
 		//获取老师的类型
 		var typeValue = $('input[name="tachertype"]:checked').val();
 		//console.log(typeValue);
@@ -444,9 +515,13 @@ $(function() {
 			}
 		});
 	}
+	
+	$(".btn").click(lightBtnAndAjax);
 
 	//ajax请求，判断是否已经评论过了
 	function postComment(postdata, callback) {
+		// 显示旋转动画
+		showRotatebox();
 		$.ajax({
 			async : false,
 			method : "POST",
@@ -458,9 +533,13 @@ $(function() {
 			async : true,
 			success : function(data) {
 				callback(data, null);
+				// 隐藏旋转动画
+				hideRotatebox();
 			},
 			error : function(err) {
 				callback(null, err);
+				// 隐藏旋转动画
+				hideRotatebox();
 			}
 		});
 	}
@@ -472,15 +551,7 @@ $(function() {
 	});
 
 
-	//表单验证
-	//当失去焦点的时候，判断不能为空
-	/*$("#uName").blur(function(){
-		if($("#uName").val() == ""){
-			$(".nameRemindWords").html("姓名不能为空");
-		}else{
-			$(".nameRemindWords").html("");
-		}
-	});*/
+	
 
 	$("#courses").blur(function() {
 		if ($("#courses").val() == "") {
@@ -639,7 +710,7 @@ $(function() {
 			});
 		}
 	}
-	//TODO
+
 	//全部提交按钮，传输数据
 	$(".lastSubmit").click(function() {
 		//如果建议没有填的话，传空字符传上去
@@ -655,6 +726,7 @@ $(function() {
 		console.log(temp);
 		temp.uid = getQueryString('uid');
 		temp.nickName = getQueryString('tid');
+		showRotatebox();
 		var url = "SaveServlet";
 		$.ajax({
 			async : false,
@@ -665,6 +737,7 @@ $(function() {
 			},
 			url : url,
 			success : function(data) {
+				hideRotatebox();
 				data = Number.parseInt(data);
 				if (data == 200) {
 					if (isAnimating) return;
@@ -676,6 +749,7 @@ $(function() {
 					}
 					showbox("点评成功！");
 				} else {
+					hideRotatebox();
 					showbox("点评失败！");
 				}
 			},
@@ -767,16 +841,29 @@ $(function() {
 		$("#bTit").html(lartit + "大区" + strtit + "排行");
 	}
 
-	/***第四屏姓名输入框+班级输入框**/
+
+	//表单验证
+	//当失去焦点的时候，判断不能为空
+	/*$("#uName").blur(function(){
+		if($("#uName").val() == ""){
+			$(".nameRemindWords").html("姓名不能为空").css({"color":"#f00","font-size":"0.5rem"});
+		}else{
+			$(".nameRemindWords").html("");
+		}
+	});
+*/
+	/***第四屏班级输入框+教师姓名输入框**/
 	$(".classListOne span").click(function() {
 		$("#classInput").val($(this).html());
 
 		if ($("#uName").val() != "") {
+			/**如果教师姓名输入框为空，提示文字不能为空**/
+			$(".nameRemindWords").html("姓名不能为空").css({"color":"#f00","font-size":"0.5rem"});
 			//点亮下方按钮
 			$(".btn").css("background", "#14c6d0");
 			//解绑点击事件
-			$(".btn").unbind();
-			$(".btn").click(lightBtnAndAjax);
+			/*$(".btn").unbind();
+			$(".btn").click(lightBtnAndAjax);*/
 		}
 	});
 
@@ -786,15 +873,15 @@ $(function() {
 			//点亮下方按钮
 			$(".btn").css("background", "#14c6d0");
 			//解绑点击事件
-			$(".btn").unbind();
-			$(".btn").click(lightBtnAndAjax);
+			/*$(".btn").unbind();
+			$(".btn").click(lightBtnAndAjax);*/
 		}
 	});
 
 	function clearInputValue() {
 		$(".btn").css("background", "#ccc");
 		//解绑点击事件
-		$(".btn").unbind();
+		//$(".btn").unbind();
 		if ($(this).attr("class") == "closeBtn1") {
 			$("#classInput").val("");
 		} else {

@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.edu.bean.Investigation;
 import com.edu.util.DataBaseOperaUtil;
 import com.edu.util.JsonUtil;
+import com.edu.util.Log4j;
 
 /**
  * 检查是否可以重复投票
@@ -36,16 +37,17 @@ public class CheckRepeatServlet extends HttpServlet {
 		resp.setCharacterEncoding("UTF-8");// 设置响应的编码格式
 		resp.setHeader("Access-Control-Allow-Origin", "*");
 		String checkJson = req.getParameter("checkJson");
-		System.out.println("CheckServlet传过来的条件---->" + checkJson);
-		// String unionid = (String) req.getSession().getAttribute("unionid");
-		// // 获取到用户的ID
-		// String unionid = "1101";
+		// System.out.println("CheckServlet传过来的条件---->" + checkJson);
+		Log4j.info(CheckRepeatServlet.class, checkJson);
+		String unionid = (String) req.getSession().getAttribute("unionid");
 		// System.out.println("CheckServlet---unionid---->" + unionid);
-		Investigation beans = JsonUtil.getCheckRepeatJson(checkJson, null);
+		Log4j.info(CheckRepeatServlet.class, unionid);
+		Investigation beans = JsonUtil.getCheckRepeatJson(checkJson, unionid);
 		PrintWriter pw = resp.getWriter();
 		try {
 			int result = DataBaseOperaUtil.chekIsRepeat(beans);
-			System.out.println("CheckServlet返回的数据库结果---->" + result);
+			Log4j.info(CheckRepeatServlet.class, result + "");
+			//System.out.println("CheckServlet返回的数据库结果---->" + result);
 			// 还没评论
 			if (result == 0) {
 				pw.println(1);
@@ -53,7 +55,12 @@ public class CheckRepeatServlet extends HttpServlet {
 				pw.println(0);
 			}
 		} catch (SQLException e) {
+			Log4j.error(CheckRepeatServlet.class, e.getMessage());
 			e.printStackTrace();
+		} finally {
+			if (pw != null) {
+				pw.close();
+			}
 		}
 	}
 

@@ -1,7 +1,6 @@
 package com.edu.util;
 
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.druid.pool.DruidPooledConnection;
 import com.edu.bean.Investigation;
 import com.edu.bean.SelectBean;
 import com.edu.global.Global;
@@ -26,10 +26,11 @@ public class DataBaseOperaUtil {
 	 * 
 	 * @param bean
 	 * @return
+	 * @throws SQLException
 	 */
-	public static int insertData(Investigation bean) {
+	public static int insertData(Investigation bean) throws SQLException {
 		int result = 0; // 插入数据库后返回的结果
-		Connection conn = C3P0Util.getConnection();// 获取数据库的链接
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();// 获取数据库的链接
 		PreparedStatement ps = null;
 		// sql语句
 		String sql = "insert into " + Global.TAB_NAME
@@ -61,13 +62,14 @@ public class DataBaseOperaUtil {
 			ps.setString(21, bean.getStu_Advice());
 			ps.setDouble(22, bean.getAverage());
 			result = ps.executeUpdate();
-			System.out.println("插入数据库成功");
+			Log4j.info(DataBaseOperaUtil.class, sql);
+			Log4j.info(DataBaseOperaUtil.class, "插入数据成功！");
 		} catch (Exception e) {
-			System.out.println("插入数据库出现错误");
+			Log4j.error(DataBaseOperaUtil.class, e.getMessage());
 			e.printStackTrace();
-			C3P0Util.close(conn, ps, null);
+
 		} finally {
-			C3P0Util.close(conn, ps, null);
+			DbPoolConnection.getInstance().close(conn, ps, null);
 		}
 		return result;
 	}
@@ -79,15 +81,16 @@ public class DataBaseOperaUtil {
 	 * @return
 	 * @throws SQLException
 	 */
-	public static int chekIsRepeat(Investigation bean) throws SQLException {
+	public static synchronized int chekIsRepeat(Investigation bean) throws SQLException {
 		int result = 0;
 		String sqlString = "SELECT count(1) FROM tab_researchinfo WHERE user_Id = '" + bean.getUser_Id()
 				+ "' and large_Area = '" + bean.getLarge_Area() + "' AND sch_Name = '" + bean.getSch_Name()
 				+ "' and role_Level = '" + bean.getRole_Level() + "'and cus_Name = '" + bean.getCus_Name()
 				+ "' and tea_Name = '" + bean.getTea_Name() + "' and date_format(fill_Date,'%Y-%m') = date_format('"
 				+ bean.getFill_Date() + "','%Y-%m')";
-		System.out.println("----查询本月是否已经投过的sql----->" + sqlString);
-		Connection conn = C3P0Util.getConnection();
+		// System.out.println("----查询本月是否已经投过的sql----->" + sqlString);
+		Log4j.info(DataBaseOperaUtil.class, sqlString);
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();
 		Statement stmt = null;
 		ResultSet rSet = null;
 		try {
@@ -97,15 +100,10 @@ public class DataBaseOperaUtil {
 				result = rSet.getInt(1);
 			}
 		} catch (SQLException e) {
+			Log4j.error(DataBaseOperaUtil.class, e.getMessage());
 			e.printStackTrace();
 		} finally {
-			try {
-				rSet.close();
-				stmt.close();
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			DbPoolConnection.getInstance().close(conn, stmt, rSet);
 		}
 		return result;
 	}
@@ -125,7 +123,7 @@ public class DataBaseOperaUtil {
 				+ Global.TAB_NAME + " A where A.large_Area = '" + large_Area
 				+ "' GROUP BY A.tea_Name,A.large_Area,A.sch_Name,A.cus_Name ORDER BY b desc;";
 		System.out.println("排名的sql:-----" + sql);
-		Connection conn = C3P0Util.getConnection();
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Investigation> list = null;
@@ -143,13 +141,13 @@ public class DataBaseOperaUtil {
 				list.add(investigation);
 			}
 		} catch (Exception exception) {
+			Log4j.error(DataBaseOperaUtil.class, exception.getMessage());
 			exception.printStackTrace();
-			System.out.println("查询数据错误~");
-			C3P0Util.close(conn, null, rs);
+			// System.out.println("查询数据错误~");
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
 			stmt.close();
 		} finally {
-			C3P0Util.close(conn, null, rs);
-			stmt.close();
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
 		}
 		return list;
 	}
@@ -218,8 +216,8 @@ public class DataBaseOperaUtil {
 				}
 			}
 		}
-		System.out.println(sql);
-		Connection conn = C3P0Util.getConnection();
+		Log4j.info(DataBaseOperaUtil.class, sql);
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Investigation> list = null;
@@ -255,12 +253,13 @@ public class DataBaseOperaUtil {
 				list.add(investigation);
 			}
 		} catch (Exception exception) {
+			Log4j.error(DataBaseOperaUtil.class, exception.getMessage());
 			exception.printStackTrace();
-			System.out.println("查询数据错误~");
-			C3P0Util.close(conn, null, rs);
+			// System.out.println("查询数据错误~");
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
 			stmt.close();
 		} finally {
-			C3P0Util.close(conn, null, rs);
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
 			stmt.close();
 		}
 		return list;
@@ -290,7 +289,7 @@ public class DataBaseOperaUtil {
 
 		if ("请选择".equals(selectBean.getLargeArea())) {
 			if ("请选择".equals(selectBean.getMajor())) {// 专业
-				sql += " where  date_format(fill_Date,'%Y-%m-%d') >= '" + selectBean.getStartDate()
+				sql += " where date_format(fill_Date,'%Y-%m-%d') >= '" + selectBean.getStartDate()
 						+ "' and role_Level = '" + role + "' and date_format(fill_Date,'%Y-%m-%d')<= '"
 						+ selectBean.getEndDate()
 						+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
@@ -308,7 +307,7 @@ public class DataBaseOperaUtil {
 							+ "' and date_format(fill_Date,'%Y-%m-%d')<= '" + selectBean.getEndDate()
 							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				} else {
-					sql = " where large_Area = '" + selectBean.getLargeArea() + "' and role_Level = '" + role
+					sql += " where large_Area = '" + selectBean.getLargeArea() + "' and role_Level = '" + role
 							+ "' and cus_Name = '" + selectBean.getMajor()
 							+ "' and date_format(fill_Date,'%Y-%m-%d') >= '" + selectBean.getStartDate()
 							+ "' and date_format(fill_Date,'%Y-%m-%d')<= '" + selectBean.getEndDate()
@@ -316,23 +315,23 @@ public class DataBaseOperaUtil {
 				}
 			} else {
 				if ("请选择".equals(selectBean.getMajor())) {
-					sql = " where large_Area = '" + selectBean.getLargeArea() + "' and sch_Name = '"
+					sql += " where large_Area = '" + selectBean.getLargeArea() + "' and sch_Name = '"
 							+ selectBean.getSchName() + "' and role_Level = '" + role
 							+ "' and date_format(fill_Date,'%Y-%m-%d') >= '" + selectBean.getStartDate()
 							+ "' and date_format(fill_Date,'%Y-%m-%d') <= '" + selectBean.getEndDate()
 							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				} else {
-					sql = " where large_Area = '" + selectBean.getLargeArea() + "' and sch_Name = '"
+					sql += " where large_Area = '" + selectBean.getLargeArea() + "' and sch_Name = '"
 							+ selectBean.getSchName() + "' and role_Level = '" + role + "' and cus_Name = '"
 							+ selectBean.getMajor() + "' and date_format(fill_Date,'%Y-%m-%d') >= '"
-							+ selectBean.getStartDate() + "' and date_format(fill_Date,'%Y-%m-%d')<= '"
+							+ selectBean.getStartDate() + "' and date_format(fill_Date,'%Y-%m-%d') <= '"
 							+ selectBean.getEndDate()
 							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
 				}
 			}
 		}
-		System.out.println(sql);
-		Connection conn = C3P0Util.getConnection();
+		Log4j.info(DataBaseOperaUtil.class, sql);
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<Investigation> list = null;
@@ -373,12 +372,13 @@ public class DataBaseOperaUtil {
 				list.add(investigation);
 			}
 		} catch (Exception exception) {
+			Log4j.error(DataBaseOperaUtil.class, exception.getMessage());
 			exception.printStackTrace();
-			System.out.println("查询数据错误~");
-			C3P0Util.close(conn, null, rs);
+			// System.out.println("查询数据错误~");
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
 			stmt.close();
 		} finally {
-			C3P0Util.close(conn, null, rs);
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
 			stmt.close();
 		}
 		return list;
@@ -530,10 +530,11 @@ public class DataBaseOperaUtil {
 	 * 
 	 * @param unionid
 	 * @return
+	 * @throws SQLException
 	 */
-	public static List<String> getRecentInputClass(String unionid) {
+	public static List<String> getRecentInputClass(String unionid) throws SQLException {
 		String sql = "SELECT DISTINCT t.stu_Class FROM " + Global.TAB_NAME + " t WHERE t.user_Id = '" + unionid + "'";
-		Connection conn = C3P0Util.getConnection();
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<String> classList = null;
@@ -545,7 +546,10 @@ public class DataBaseOperaUtil {
 				classList.add(rs.getString("stu_Class"));
 			}
 		} catch (Exception exception) {
+			Log4j.error(DataBaseOperaUtil.class, exception.getMessage());
 			exception.printStackTrace();
+		} finally {
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
 		}
 		return classList;
 	}
@@ -555,10 +559,11 @@ public class DataBaseOperaUtil {
 	 * 
 	 * @param unionid
 	 * @return
+	 * @throws SQLException
 	 */
-	public static List<String> getRecentInputTeacher(String unionid) {
+	public static List<String> getRecentInputTeacher(String unionid) throws SQLException {
 		String sql = "SELECT DISTINCT t.tea_Name FROM " + Global.TAB_NAME + " t WHERE t.user_Id = '" + unionid + "'";
-		Connection conn = C3P0Util.getConnection();
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();
 		Statement stmt = null;
 		ResultSet rs = null;
 		List<String> teacherList = null;
@@ -570,7 +575,10 @@ public class DataBaseOperaUtil {
 				teacherList.add(rs.getString("tea_Name"));
 			}
 		} catch (Exception exception) {
+			Log4j.error(DataBaseOperaUtil.class, exception.getMessage());
 			exception.printStackTrace();
+		} finally {
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
 		}
 		return teacherList;
 	}

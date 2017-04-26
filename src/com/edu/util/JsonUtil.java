@@ -8,8 +8,8 @@ import java.util.List;
 
 import com.edu.bean.Investigation;
 import com.edu.bean.SelectBean;
-import com.edu.bean.WeiChatInfo;
-import com.edu.bean.WeiXinUserInfo;
+import com.edu.bean.AccessTokenBean;
+import com.edu.bean.WXUserBean;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -27,14 +27,26 @@ public class JsonUtil {
 		if (json != null) {
 			bean = new Investigation();
 			JSONObject jsonObj = JSONObject.fromObject(json);
-			String uid = jsonObj.getString("uid");
-			String nickNameString = jsonObj.getString("nickName");
-
-			try {
-				nickNameString = URLDecoder.decode(nickNameString, "UTF-8");
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (unionid != null && !"".equals(unionid)) {
+				bean.setUser_Id(unionid);
+			} else {
+				String uid = jsonObj.getString("uid");
+				bean.setUser_Id(uid);
 			}
+			try {
+				if (nickname != null && !"".equals(nickname)) {
+					bean.setUser_Nick(nickname); // 用户昵称
+				} else {
+					String nickNameString = jsonObj.getString("nickName");
+					nickNameString = URLDecoder.decode(nickNameString, "UTF-8");
+					bean.setUser_Nick(nickNameString); // 用户昵称
+				}
+			} catch (Exception exception) {
+				Log4j.error(JsonUtil.class, exception.getMessage());
+				exception.printStackTrace();
+			}
+			Log4j.info(JsonUtil.class, bean.getUser_Id());
+			Log4j.info(JsonUtil.class, bean.getUser_Nick());
 			// 大区名称
 			String large_Area = jsonObj.getString("large_Area");
 			// 校区名称
@@ -79,11 +91,8 @@ public class JsonUtil {
 			double average_Score = total_Score / 10;
 			// 学员建议
 			String stu_Advice = jsonObj.getString("stu_Advice");
-			System.out.println("------>insert" + nickNameString);
-			bean.setUser_Nick(nickNameString); // 用户昵称
 			bean.setRole_Level(role_Level);// 评论的角色
 			bean.setStu_Class(stu_Class);// 班级编号
-			bean.setUser_Id(uid);
 			bean.setLarge_Area(large_Area);
 			bean.setSch_Name(sch_Name);
 			bean.setTea_Name(tea_Name);
@@ -193,11 +202,11 @@ public class JsonUtil {
 	 * 
 	 * @return
 	 */
-	public static WeiChatInfo getWeiChat(String jsonString) {
-		WeiChatInfo weiChat = null;
+	public static AccessTokenBean getWeiChat(String jsonString) {
+		AccessTokenBean weiChat = null;
 		try {
 			if (jsonString != null) {
-				weiChat = new WeiChatInfo();
+				weiChat = new AccessTokenBean();
 				JSONObject jsonObj = JSONObject.fromObject(jsonString);
 				String access_token = jsonObj.getString("access_token");
 				int expires_in = jsonObj.getInt("expires_in");
@@ -225,11 +234,11 @@ public class JsonUtil {
 	 * 
 	 * @return
 	 */
-	public static WeiXinUserInfo getWeiXinUserInfo(String weiXinJson) {
-		WeiXinUserInfo weiXinUserInfo = null;
+	public static WXUserBean getWeiXinUserInfo(String weiXinJson) {
+		WXUserBean weiXinUserInfo = null;
 		try {
 			if (weiXinJson != null) {
-				weiXinUserInfo = new WeiXinUserInfo();
+				weiXinUserInfo = new WXUserBean();
 				JSONObject jsonObject = new JSONObject().fromObject(weiXinJson);
 				String openid = jsonObject.getString("openid");
 				String nickname = jsonObject.getString("nickname");
@@ -265,6 +274,7 @@ public class JsonUtil {
 	 * 
 	 */
 	public static Investigation getCheckRepeatJson(String json, String unionid) {
+		Log4j.info(JsonUtil.class, unionid);
 		Investigation bean = null;
 		if (json != null) {
 			bean = new Investigation();
@@ -279,8 +289,13 @@ public class JsonUtil {
 			String cus_Name = jsonObj.getString("cus_Name");
 			// 角色
 			String role_Level = jsonObj.getString("role_Level");
+			if (unionid == null) {
+				String uid = jsonObj.getString("uid");
+				bean.setUser_Id(uid);
+			} else {
+				bean.setUser_Id(unionid);
+			}
 
-			String uid = jsonObj.getString("uid");
 			// 填表日期
 			Date date = new Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -293,7 +308,6 @@ public class JsonUtil {
 			bean.setRole_Level(role_Level);
 			bean.setCus_Name(cus_Name);
 			bean.setFill_Date(fill_Date);
-			bean.setUser_Id(uid);
 		}
 		return bean;
 	}

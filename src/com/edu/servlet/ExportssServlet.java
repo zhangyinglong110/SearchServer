@@ -54,17 +54,17 @@ public class ExportssServlet extends HttpServlet {
 	 */
 	private void exportEXcel(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		String jsonString = req.getParameter("name");
-		SelectBean selectBean = new JsonUtil().getJsonSelectJson(jsonString);
-		List<Investigation> exportList = new DataBaseOperaUtil().getSelectInfo(selectBean);
+		SelectBean selectBean = JsonUtil.getJsonSelectJson(jsonString);
+		List<Investigation> exportList = DataBaseOperaUtil.getSelectInfo(selectBean);
 		if (exportList != null && exportList.size() > 0) {
 			if (exportList.get(0).getRole_Level().equals("讲师")) {
 				String[] headName1 = { "大区", "校区", "教师姓名", "角色", "专业", "班级", "老师出勤", "项目讲解", "培训提问", "回答问题", "老师指导",
 						"培训纪律", "讲解技巧", "培训进度", "实例讲解", "培训后作品", "总分", "平均分", "学员建议" };
-				expressTeacher(req, resp, headName1, exportList);
+				expressTeacher(req, resp, headName1, exportList, selectBean);
 			} else {
 				String[] headName2 = { "大区", "校区", "教师姓名", "角色", "专业", "班级", "老师出勤", "关心程度", "巡堂", "找学员沟通", "缺勤关注",
 						"班级纪律", "受理投诉", "组织活动", "资料的及时收发", "整体工作评分", "总分", "平均分", "学员建议" };
-				expressTeacher(req, resp, headName2, exportList);
+				expressTeacher(req, resp, headName2, exportList, selectBean);
 			}
 		} else {
 			PrintWriter out = resp.getWriter();
@@ -82,7 +82,7 @@ public class ExportssServlet extends HttpServlet {
 	 * @throws IOException
 	 */
 	private void expressTeacher(HttpServletRequest req, HttpServletResponse resp, String[] headName,
-			List<Investigation> exportList) throws IOException {
+			List<Investigation> exportList, SelectBean selectBean) throws IOException {
 		SimpleDateFormat ss = new SimpleDateFormat("yyyyMMddHHmmss");
 		String dateString = ss.format(new Date());
 
@@ -120,18 +120,36 @@ public class ExportssServlet extends HttpServlet {
 				"cls_Skill", "cls_Progress", "exam_Explain", "class_Homework", "total_Score", "average", "stu_Advice" };// 列id
 		ExportUtils.outputHeaders(headName, sheets, headerStyle);// 生成表头
 		ExportUtils.outputColumn(Column, exportList, sheets, 1, cell_Style);// 生成列表数据
-
 		String path = req.getRealPath("/xlsx");
-		String filePath = path + "/" + dateString + ".xls";
+		String fileName = null;
+		if ("".equals(selectBean.getLargeArea()) || "请选择".equals(selectBean.getLargeArea())) {
+			fileName = "全国-" + selectBean.getRole_Level() + "-" + dateString + "-满意度调查结果表";
+		} else if ("".equals(selectBean.getSchName()) || "请选择".equals(selectBean.getSchName())) {
+			fileName = selectBean.getLargeArea() + "-" + selectBean.getRole_Level() + "-" + dateString + "-满意度调查结果表";
+		} else {
+			fileName = selectBean.getLargeArea() + "-" + selectBean.getSchName() + "-" + selectBean.getRole_Level()
+					+ "-" + dateString + "-满意度调查结果表";
+		}
+		// String path = req.getRealPath("/xlsx");
+		// String fileName = selectBean.getLargeArea() + "-" +
+		// selectBean.getSchName() + "-" + selectBean.getRole_Level()
+		// + dateString + "满意度调查结果表";
+
+		String filePath = path + "/" + fileName + ".xls";
+		// String filePath1 = path + "/" + fileName + ".xls";
 		FileOutputStream fos = new FileOutputStream(filePath);
 		wb.write(fos);
 		fos.flush();
 		fos.close();
 
-		ServletOutputStream out = resp.getOutputStream();
-		out.println(dateString + ".xls");
-		out.flush();
-		out.close();
+		// ServletOutputStream out = resp.getOutputStream();
+		// out.flush();
+		// out.close();
+		PrintWriter pw = resp.getWriter();// 响应服务器对象
+		pw.println(fileName + ".xls");
+		pw.flush();
+		pw.close();
+
 	}
 
 }

@@ -37,4 +37,15 @@
 		<servlet-name>report</servlet-name>
 		<url-pattern>/report</url-pattern>
 	</servlet-mapping>
+	<!--用来启动 log4jConfigLocation的servlet -->
+	<!-- <servlet> -->
+	<!-- <servlet-name>Log4JInitServlet</servlet-name> -->
+	<!-- <servlet-class>com.edu.servlet.Log4JInitServlet</servlet-class> -->
+	<!-- <init-param> -->
+	<!-- <param-name>log4j-properties-location</param-name> -->
+	<!-- <param-value>log4j.properties</param-value> -->
+	<!-- </init-param> -->
+	<!-- <load-on-startup>1</load-on-startup> -->
+	<!-- </servlet> -->
+
 </web-app>

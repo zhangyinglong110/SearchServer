@@ -14,6 +14,7 @@ import com.edu.bean.Investigation;
 import com.edu.bean.SelectBean;
 import com.edu.util.DataBaseOperaUtil;
 import com.edu.util.JsonUtil;
+import com.edu.util.Log4j;
 
 import net.sf.json.JSONArray;
 
@@ -37,7 +38,8 @@ public class SelectServlet extends HttpServlet {
 		resp.setCharacterEncoding("utf-8");
 		req.setCharacterEncoding("UTF-8");
 		String jsonString = req.getParameter("name");
-		System.out.println(jsonString);
+		Log4j.info(SelectServlet.class, jsonString);
+		// System.out.println(jsonString);
 		try {
 			SelectBean selectBean = JsonUtil.getJsonSelectJson(jsonString);
 			List<Investigation> selectInfo = DataBaseOperaUtil.getSelectInfo1(selectBean);
@@ -45,6 +47,7 @@ public class SelectServlet extends HttpServlet {
 			JSONArray jsonArray = JSONArray.fromObject(selectInfo);
 			pw.println(jsonArray);
 		} catch (Exception e) {
+			Log4j.error(SelectServlet.class, e.getMessage());
 			e.printStackTrace();
 		}
 	}

@@ -39,11 +39,17 @@
 	}
 
 	function deal_getSchName() {
-		schNameAarr = this.req.responseText.split(",");
-		document.getElementById("sch_Name").length = 0;
-		for (i = 0; i < schNameAarr.length; i++) {
-			document.getElementById("sch_Name").options[i] = new Option(schNameAarr[i],
-				schNameAarr[i]);
+		data = this.req.responseText;
+		if ("加载错误,F5刷新重试！" == data) {
+			alert("加载错误，F5刷新重试!");
+			return;
+		} else {
+			schNameAarr = this.req.responseText.split(",");
+			document.getElementById("sch_Name").length = 0;
+			for (i = 0; i < schNameAarr.length; i++) {
+				document.getElementById("sch_Name").options[i] = new Option(schNameAarr[i],
+					schNameAarr[i]);
+			}
 		}
 	}
 
@@ -116,7 +122,7 @@
 				<button type="button" class="btn1 searchBtn" value="查询" name="查询"
 					onclick="chaxun(form2)">查询</button>
 				<button type="button" class=" outPutBtn" value="导出" id="exportss"
-					onclick="exportssTab(form2)" style="visibility: hidden;">导出明细</button>
+					onclick="exportssTab(form2)" style="display: none;">导出明细</button>
 			</div>
 			<p
 				style="color: #FF0000; font-size:16px; text-align: right;padding-bottom:5px">使用过程中如有问题，请邮件反馈至&nbsp;&nbsp;yanxing@feicuiedu.com</p>
@@ -190,7 +196,7 @@
 			alert("请输入结束日期！");form2.endDate.focus();return false;
 		}
 		var conditionData = {
-			"largeArea" : document.getElementById('large_Area').value,
+			"largeArea" : document.getElementById('large_Area').value.trim(),
 			"schName" : document.getElementById('sch_Name').value,
 			"cusName" : document.getElementById('major').value,
 			"role" : document.getElementById('teacherrole').value,
