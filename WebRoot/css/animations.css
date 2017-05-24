@@ -117,8 +117,8 @@
 }
 
 .pt-page-moveCircle {
-	-webkit-animation: moveCircle ease-in-out 1.2s both;
-	animation: moveCircle ease-in-out 1.2s both;
+	-webkit-animation: moveCircle ease-in-out 0.8s both;
+	animation: moveCircle ease-in-out 0.8s both;
 }
 
 

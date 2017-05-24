@@ -1,4 +1,4 @@
-body{
+﻿body{
 	background:#f6f6f6;
 }
 
@@ -6,7 +6,7 @@ body{
 	margin:0 auto;
 }
 .box{
-	z-index: 100;
+	z-index: 1001;
     position: fixed;  
     width: 100%;  
     height: 100%;  
@@ -44,12 +44,12 @@ body{
 }
 
 .rotatebox{
-	z-index: 100;
+    z-index: 100;
     position: fixed;  
     width: 100%;  
     height: 100%;  
     background: rgba(0,0,0,0.2);  
-	display: block;
+    display: block;
     text-align: center;
     display: none;
 }
@@ -60,7 +60,7 @@ body{
     margin:50% auto; 
     background-color: #FFFFFF;
     border: 1px solid #ccc;
-	border-radius: 5px;
+    border-radius: 5px;
 }
 
 .rotateImg{
@@ -111,7 +111,7 @@ body{
 	cursor: pointer;
 }
 
-/**閬僵灞�**/
+/**遮罩层**/
 .kuang{
 	width:100%;
 	height:100%;
@@ -121,7 +121,7 @@ body{
 	display:none;
 	position:absolute;
 }
-/**瀛︽牎**/
+/**学校**/
 #schools{
 	width:85%;
 	height:60%;
@@ -142,24 +142,11 @@ body{
 	right: 6%;
 	width: 25px;
 	height: 25px;
-	/*padding: 32px;*/
-	/*opacity: 0.8;*/
-	/*cursor: pointer;*/
-	/*transition: 0.3s ease;*/
 	z-index:10000;
 }
 
 .modal-close-btn:hover{
 	opacity: 1;
-	animation:rotateCloseBtn 1s;
-}
-@keyframes rotateCloseBtn {
-	0%{
-		transform:rotate(0deg);
-	}
-	100%{
-		transform:rotate(360deg);
-	}
 }
 #schools li{
 	margin:2% 4.5% 4% 4.5%;
@@ -235,6 +222,15 @@ body{
 .page-title {
 	width:101%;
 	margin-top:16%;
+	margin-bottom:5%;
+	color:#14c6d0;
+	font-size:0.7rem;
+	text-align: left;
+}
+
+.page-title2 {
+	width:101%;
+	margin-top:5%;
 	margin-bottom:5%;
 	color:#14c6d0;
 	font-size:0.7rem;
@@ -353,10 +349,12 @@ body{
 }
 
 .typechoise{
-	margin-top: 15%;
+	width: 100%;
+    float: left;
+    border-top: 1px solid gray;
 }
 
-/**鐝骇鍒楄〃**/
+/**班级列表**/
 .classList{
 	width:100%;
 }
@@ -367,7 +365,23 @@ body{
 .nameContainer{
 	margin-top: 10px;
 }
-
+/***班级下拉框**/
+#classInput{
+	width:100%;
+	font-size:0.6rem;
+	border:none;
+}
+#classInput .opt{
+	display:block;
+	width:50%;
+	font-size:0.6rem;
+}
+/**教师下拉框**/
+#uName{
+	width:100%;
+	font-size:0.6rem;
+	border:none;
+}
 
 .classList span{
 	display: inline-block;
@@ -376,7 +390,7 @@ body{
 	margin:2px;
 	padding:5px 10px;
 	background-color: #d0f7c1;
-	font:20px/20px "骞煎渾","妤蜂綋","瀹嬩綋",Arial,sans-serif;
+	font:20px/20px "幼圆","楷体","宋体",Arial,sans-serif;
 	text-align:center;
 	cursor:pointer;
 }
@@ -398,14 +412,13 @@ body{
 	height:40px;
 	background-color:#878787;
 	font-size:0.7rem;
-	/*font-weight:900;*/
 	line-height:40px;
 	text-align:center;
 	transition: 0.5s ease;
 	z-index:1000000;
 	color:#fff;
 	display:none;
-	/*border-radius:20px;*/
+	cursor: pointer;
 }
 .profession{
 	border:1px solid #c7c7c7;
@@ -414,46 +427,37 @@ body{
 	display: none;
 }
 .professionBtn{
-	width:100%;
+	width:80%;
 	height:40px;
 	line-height:40px;
 	background-color:#878787;
 	color:#fff;
 	display:block;
-	margin:0 auto;
 	font-size:0.7rem;
-	/*font-weight:900;*/
 	text-align:center;
-	margin-top:120%;
 	transition: 0.5s ease;
+	margin:auto;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 6%;
 }
 .btn{
-   /* width: 80%;
-    height:40px;
-	line-height:40px;
-	background-color:#878787;
-	color:#fff;
-	margin:0 auto;
-	font-size:0.7rem;
-	text-align:center;
-    position: fixed;
-    left: 10%;
-    bottom: 10%;*/
-	
-	
-	
-	width:100%;
+	width:80%;
 	height:40px;
 	line-height:40px;
 	background-color:#878787;
 	color:#fff;
 	display:block;
-	margin:0 auto;
+	margin:auto;
 	font-size:0.7rem;
 	text-align:center;
-	margin-top:15%;
 	transition: 0.5s ease;
 	cursor: pointer;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 10%;
 }
 
 .pageChoice{
@@ -468,7 +472,7 @@ label{
 	width:90%;
 	overflow:hidden;
 	color:#000;
-	font-family:妤蜂綋;
+	font-family:楷体;
 }
 .textRemindWord{
 	padding-left:10%;
@@ -514,3 +518,19 @@ label{
 	cursor: pointer;
 }
 
+i {
+    color: red;
+    margin-right: 0.04rem;
+    font-style: normal;
+}
+.label {
+	height: 0.84rem;
+    line-height: 0.84rem;
+    margin-top: 0.26rem;
+    font-size: 18px;
+}
+
+.inp {
+	-webkit-appearance: none;
+	background: white;
+}

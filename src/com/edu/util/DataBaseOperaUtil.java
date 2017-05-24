@@ -3,14 +3,23 @@ package com.edu.util;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
 import com.edu.bean.Investigation;
+import com.edu.bean.LargeAreaBean;
+import com.edu.bean.SchoolBean;
 import com.edu.bean.SelectBean;
+import com.edu.bean.SubjectBean;
 import com.edu.global.Global;
 
 /**
@@ -164,7 +173,7 @@ public class DataBaseOperaUtil {
 	 * @throws SQLException
 	 */
 	public static List<Investigation> getSelectInfo(SelectBean selectBean) throws SQLException {
-		String sql = "SELECT * FROM tab_researchinfo t";
+		String sql = "SELECT *,date_format(t.fill_Date,'%Y-%m') formFillDate FROM tab_researchinfo t";
 		int role = 0;
 		if ("讲师".equals(selectBean.getRole_Level())) {
 			role = 0;
@@ -234,6 +243,7 @@ public class DataBaseOperaUtil {
 				} else {
 					investigation.setRole_Level("班主任");
 				}
+				investigation.setFill_Date(rs.getString("formFillDate"));
 				investigation.setSch_Name(rs.getString("sch_Name"));
 				investigation.setTea_Name(rs.getString("tea_Name"));
 				investigation.setCus_Name(rs.getString("cus_Name"));
@@ -277,7 +287,7 @@ public class DataBaseOperaUtil {
 	 * @throws SQLException
 	 */
 	public static List<Investigation> getSelectInfo1(SelectBean selectBean) throws SQLException {
-		String sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.role_Level,t.cus_Name,t.stu_Class,t.tea_Attendance,t.cls_Explain,t.cls_Quesions,t.ques_Answer,t.cls_Coach,t.cls_Discipline,t.cls_Skill,t.cls_Progress,t.exam_Explain,t.class_Homework,t.total_Score,t.average,t.stu_Advice,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b FROM tab_researchinfo t ";
+		String sql = "SELECT t.large_Area,t.sch_Name,t.tea_Name,t.role_Level,t.cus_Name,t.stu_Class,t.tea_Attendance,t.cls_Explain,t.cls_Quesions,t.ques_Answer,t.cls_Coach,t.cls_Discipline,t.cls_Skill,t.cls_Progress,t.exam_Explain,t.class_Homework,t.total_Score,t.average,t.stu_Advice,COUNT(t.tea_Name) a,SUM(t.average)/COUNT(1) b,date_format(t.fill_Date,'%Y-%m') fillDate FROM tab_researchinfo t ";
 		int role = 0;
 		if ("讲师".equals(selectBean.getRole_Level())) {
 			role = 0;
@@ -292,12 +302,12 @@ public class DataBaseOperaUtil {
 				sql += " where date_format(fill_Date,'%Y-%m-%d') >= '" + selectBean.getStartDate()
 						+ "' and role_Level = '" + role + "' and date_format(fill_Date,'%Y-%m-%d')<= '"
 						+ selectBean.getEndDate()
-						+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+						+ "' GROUP BY tea_Name,fillDate ORDER BY large_Area ASC ,sch_Name ASC,fillDate ASC";
 			} else {
 				sql += " where cus_Name = '" + selectBean.getMajor() + "' and role_Level = '" + role
 						+ "'and date_format(fill_Date,'%Y-%m-%d') >= '" + selectBean.getStartDate()
 						+ "' and date_format(fill_Date,'%Y-%m-%d') <= '" + selectBean.getEndDate()
-						+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+						+ "' GROUP BY tea_Name,fillDate ORDER BY large_Area ASC ,sch_Name ASC,fillDate ASC";
 			}
 		} else {
 			if ("请选择".equals(selectBean.getSchName())) {
@@ -305,13 +315,13 @@ public class DataBaseOperaUtil {
 					sql += " where large_Area = '" + selectBean.getLargeArea() + "' and role_Level = '" + role
 							+ "' and  date_format(fill_Date,'%Y-%m-%d') >= '" + selectBean.getStartDate()
 							+ "' and date_format(fill_Date,'%Y-%m-%d')<= '" + selectBean.getEndDate()
-							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+							+ "' GROUP BY tea_Name,fillDate ORDER BY large_Area ASC ,sch_Name ASC,fillDate ASC";
 				} else {
 					sql += " where large_Area = '" + selectBean.getLargeArea() + "' and role_Level = '" + role
 							+ "' and cus_Name = '" + selectBean.getMajor()
 							+ "' and date_format(fill_Date,'%Y-%m-%d') >= '" + selectBean.getStartDate()
 							+ "' and date_format(fill_Date,'%Y-%m-%d')<= '" + selectBean.getEndDate()
-							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+							+ "' GROUP BY tea_Name,fillDate ORDER BY large_Area ASC ,sch_Name ASC,fillDate ASC";
 				}
 			} else {
 				if ("请选择".equals(selectBean.getMajor())) {
@@ -319,14 +329,14 @@ public class DataBaseOperaUtil {
 							+ selectBean.getSchName() + "' and role_Level = '" + role
 							+ "' and date_format(fill_Date,'%Y-%m-%d') >= '" + selectBean.getStartDate()
 							+ "' and date_format(fill_Date,'%Y-%m-%d') <= '" + selectBean.getEndDate()
-							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+							+ "' GROUP BY tea_Name,fillDate ORDER BY large_Area ASC ,sch_Name ASC,fillDate ASC";
 				} else {
 					sql += " where large_Area = '" + selectBean.getLargeArea() + "' and sch_Name = '"
 							+ selectBean.getSchName() + "' and role_Level = '" + role + "' and cus_Name = '"
 							+ selectBean.getMajor() + "' and date_format(fill_Date,'%Y-%m-%d') >= '"
 							+ selectBean.getStartDate() + "' and date_format(fill_Date,'%Y-%m-%d') <= '"
 							+ selectBean.getEndDate()
-							+ "' GROUP BY t.tea_Name,t.cus_Name,t.stu_Class ORDER BY large_Area ASC,sch_Name ASC,cus_Name ASC,b DESC";
+							+ "' GROUP BY tea_Name,fillDate ORDER BY large_Area ASC ,sch_Name ASC,fillDate ASC";
 				}
 			}
 		}
@@ -352,6 +362,7 @@ public class DataBaseOperaUtil {
 				investigation.setTea_Name(rs.getString("tea_Name")); // 老师名称
 				investigation.setCus_Name(rs.getString("cus_Name"));// 专业
 				investigation.setPeopleCount(rs.getInt("a")); // 投票人数
+				investigation.setFill_Date(rs.getString("fillDate"));
 				/********* 设置四舍五入 *********/
 				double average = rs.getDouble("b");
 				BigDecimal b = new BigDecimal(average);
@@ -581,6 +592,154 @@ public class DataBaseOperaUtil {
 			DbPoolConnection.getInstance().close(conn, stmt, rs);
 		}
 		return teacherList;
+	}
+
+	/**
+	 * 查出所有大区的code以及大区的名称
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public static List<LargeAreaBean> getAllLargeAreaBean() throws SQLException {
+		String sql = "SELECT id,largeAreaName FROM " + Global.TAB_AREALARGE;
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		List<LargeAreaBean> areaLargeList = null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql); // 执行查询数据库的操作
+			areaLargeList = new ArrayList<LargeAreaBean>();
+
+			while (rs.next()) {
+				LargeAreaBean bean = new LargeAreaBean();
+				bean.setSchoolcode(rs.getInt("id"));
+				bean.setName(rs.getString("largeAreaName"));
+				areaLargeList.add(bean);
+			}
+		} catch (Exception exception) {
+			Log4j.error(DataBaseOperaUtil.class, exception.getMessage());
+			exception.printStackTrace();
+		} finally {
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
+		}
+		return areaLargeList;
+	}
+
+	public static List<List<SchoolBean>> getSchools() throws SQLException {
+		List<List<SchoolBean>> allSchools = null;
+
+		List<SchoolBean> schools = new ArrayList<SchoolBean>();
+		// 查询出所有的校区所对应的专业
+		String sql = "SELECT DISTINCT t.majorId,s.schoolName FROM tab_teacher t,tab_school s WHERE t.schoolId = s.id";
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql); // 执行查询数据库的操作
+			List list = resultSetToList(rs);
+			System.out.println(list.toString());
+			for (int i = 0; i < list.size(); i++) {
+				list.get(i);
+			}
+
+			// while (rs.next()) {
+			// SchoolBean sb = new SchoolBean();
+			// sb.setSch(rs.getString("schoolName"));
+			//
+			// }
+		} catch (Exception exception) {
+			Log4j.error(DataBaseOperaUtil.class, exception.getMessage());
+			exception.printStackTrace();
+		} finally {
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
+		}
+
+		return allSchools;
+	}
+
+	public static List resultSetToList(ResultSet rs) throws java.sql.SQLException {
+		if (rs == null)
+			return Collections.EMPTY_LIST;
+
+		ResultSetMetaData md = rs.getMetaData(); // 得到结果集(rs)的结构信息，比如字段数、字段名等
+		int columnCount = md.getColumnCount(); // 返回此 ResultSet 对象中的列数
+		List list = new ArrayList();
+		Map rowData = new HashMap();
+		while (rs.next()) {
+			rowData = new HashMap(columnCount);
+			for (int i = 1; i <= columnCount; i++) {
+				rowData.put(md.getColumnName(i), rs.getObject(i));
+			}
+			list.add(rowData);
+		}
+		return list;
+	}
+
+	/**
+	 * 查询校区的ID
+	 * 
+	 * @param teacherName
+	 * @param schoolName
+	 * @return
+	 * @throws SQLException
+	 */
+	public static int schoolId(String teacherName, String schoolName) throws SQLException {
+		String sql = "SELECT DISTINCT s.id  FROM tab_school s,tab_researchinfo r WHERE r.tea_Name = '" + teacherName
+				+ "' AND s.schoolName = '" + schoolName + "' ";
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();
+		Statement stmt = null;
+		ResultSet rs = null;
+		int result = 0;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql); // 执行查询数据库的操作
+			while (rs.next()) {
+				result = rs.getInt("id");
+			}
+		} catch (Exception exception) {
+			Log4j.error(DataBaseOperaUtil.class, exception.getMessage());
+			exception.printStackTrace();
+		} finally {
+			DbPoolConnection.getInstance().close(conn, stmt, rs);
+		}
+		return result;
+	}
+
+	/**
+	 * 像老师表中插入数据
+	 * 
+	 * @param subjectBean
+	 * @return
+	 * @throws SQLException
+	 */
+	public static int InsertTeacherTab(SubjectBean subjectBean) throws SQLException {
+		int result = 0; // 插入数据库后返回的结果
+		DruidPooledConnection conn = DbPoolConnection.getInstance().getConnection();// 获取数据库的链接
+		PreparedStatement ps = null;
+		// sql语句
+		String sql = "insert into " + Global.TAB_TEACHER + " (teacherName,role,className,majorId,schoolId)"
+				+ "value (?,?,?,?,?)";
+		try {
+			// 获得PreparedStatement对象
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, subjectBean.getTeacherName());// 用户昵称
+			ps.setString(2, subjectBean.getRoleLevel());
+			ps.setString(3, subjectBean.getClassName());
+			ps.setInt(4, subjectBean.getMajorId());
+			ps.setInt(5, subjectBean.getSchoolId());
+			result = ps.executeUpdate();
+			Log4j.info(DataBaseOperaUtil.class, sql);
+			Log4j.info(DataBaseOperaUtil.class, "插入数据成功！");
+		} catch (Exception e) {
+			Log4j.error(DataBaseOperaUtil.class, e.getMessage());
+			e.printStackTrace();
+
+		} finally {
+			DbPoolConnection.getInstance().close(conn, ps, null);
+		}
+		return result;
 	}
 
 }

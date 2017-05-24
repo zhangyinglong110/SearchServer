@@ -299,7 +299,21 @@ public class Investigation {
 
 	@Override
 	public String toString() {
-		return tea_Name + ":" + sch_Name + ":" + role_Level;
+		return "Investigation [user_Num=" + user_Num + ", user_Id=" + user_Id + ", large_Area=" + large_Area
+				+ ", sch_Name=" + sch_Name + ", stu_Class=" + stu_Class + ", role_Level=" + role_Level + ", user_Nick="
+				+ user_Nick + ", tea_Name=" + tea_Name + ", cus_Name=" + cus_Name + ", fill_Date=" + fill_Date
+				+ ", tea_Attendance=" + tea_Attendance + ", cls_Explain=" + cls_Explain + ", cls_Quesions="
+				+ cls_Quesions + ", ques_Answer=" + ques_Answer + ", cls_Coach=" + cls_Coach + ", cls_Discipline="
+				+ cls_Discipline + ", cls_Skill=" + cls_Skill + ", cls_Progress=" + cls_Progress + ", exam_Explain="
+				+ exam_Explain + ", class_Homework=" + class_Homework + ", total_Score=" + total_Score + ", stu_Advice="
+				+ stu_Advice + ", average=" + average + ", peopleCount=" + peopleCount + "]";
 	}
+
+//	@Override
+//	public String toString() {
+//		return tea_Name + ":" + sch_Name + ":" + role_Level + ":" + total_Score+":"+average;
+//	}
+	
+	
 
 }

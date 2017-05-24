@@ -11,15 +11,10 @@ $(function() {
 
 
 	function getQueryString(name){
-	 var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-	 var r = decodeURI(window.location.search).substr(1).match(reg);
-	 if(r!=null)return  unescape(r[2]); return null;
+		 var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+		 var r = decodeURI(window.location.search).substr(1).match(reg);
+		 if(r!=null)return  unescape(r[2]); return null;
 	}
-
-
-
-	//alert("uid->"+getQueryString('uid')+" nickname->"+encodeURI(getQueryString("tid")));
-
 
 	//这里我们给个定时器来实现页面加载完毕再进行字体设置
 	var now = {
@@ -43,10 +38,9 @@ $(function() {
 
 	$('.wrap').css('-webkit-transform', 'scale(' + s + ',' + s + ') translate(0px,-' + ss + 'px)');
 
-	document.addEventListener('touchmove', function(event) {
+	/*document.addEventListener('touchmove', function(event) {
 		event.preventDefault();
 	}, false);
-
 	$(".page.pageCanSwipe").swipeUp(function() {
 		upSwipping();
 		function upSwipping() {
@@ -58,28 +52,28 @@ $(function() {
 				now.col = 1; pageMove(towards.up);
 			}
 		}
-	});
+	});*/
 
 	function pageMove(tw) {
 		var lastPage = ".page-" + last.row + "-" + last.col;
 		var nowPage = ".page-" + now.row + "-" + now.col;
 		switch (tw) {
-		case towards.up:
-			outClass = 'pt-page-moveToTop';
-			inClass = 'pt-page-moveFromBottom';
-			break;
-		case towards.right:
-			outClass = 'pt-page-moveToRight';
-			inClass = 'pt-page-moveFromLeft';
-			break;
-		case towards.down:
-			outClass = 'pt-page-moveToBottom';
-			inClass = 'pt-page-moveFromTop';
-			break;
-		case towards.left:
-			outClass = 'pt-page-moveToLeft';
-			inClass = 'pt-page-moveFromRight';
-			break;
+			case towards.up:
+				outClass = 'pt-page-moveToTop';
+				inClass = 'pt-page-moveFromBottom';
+				break;
+			case towards.right:
+				outClass = 'pt-page-moveToRight';
+				inClass = 'pt-page-moveFromLeft';
+				break;
+			case towards.down:
+				outClass = 'pt-page-moveToBottom';
+				inClass = 'pt-page-moveFromTop';
+				break;
+			case towards.left:
+				outClass = 'pt-page-moveToLeft';
+				inClass = 'pt-page-moveFromRight';
+				break;
 		}
 		isAnimating = true;
 		$(nowPage).removeClass("hide");
@@ -92,11 +86,9 @@ $(function() {
 			$(lastPage).removeClass(outClass);
 			$(lastPage).addClass("hide");
 			$(lastPage).find("img").addClass("hide");
-
 			$(nowPage).addClass('page-current');
 			$(nowPage).removeClass(inClass);
 			$(nowPage).find("img").removeClass("hide");
-
 			isAnimating = false;
 		}, 500);
 	}
@@ -124,7 +116,7 @@ $(function() {
 		case "班主任":
 			path = "json/headmaster.json";
 			break;
-		case "就业":
+		case "在线老师":
 			path = "json/employmentManager.json";
 			break;
 		}
@@ -164,19 +156,22 @@ $(function() {
 				method : "POST",
 				traditional : true,
 				url : "recentServlet",
-				timeout : 3000,
+				timeout:  5000,
 				data : {
 					uid : getQueryString('uid')
 				},
 				async : true,
 				success : function(data) {
-					//alert(data);
 					resolve(data);
 				},
 				error : function(err) {
-					//alert("error-->");
 					resolve('{"classList":[],"teacherName":[]}');
-				}
+				},
+				complete : function(XMLHttpRequest,status){ 
+			　　　　if(status=='timeout'){
+			 			resolve('{"classList":[],"teacherName":[]}');
+			　　　　}
+			　　}
 			});
 		});
 
@@ -187,9 +182,6 @@ $(function() {
 			schoolChoice(results[1]);
 			// 专业
 			confSubjectText(results[2]);
-			// 老师班级数据
-			//updateClassAndTeaName(results[3]);
-
 		});
 		p3.then(function(data) {
 			updateClassAndTeaName(data);
@@ -271,25 +263,6 @@ $(function() {
 						"color" : "#14c6d0"
 					});
 					$("#confirm").css("background-color", " #14c6d0");
-					$("#confirm").unbind();
-					$("#confirm").on("singleTap", function() {
-						// 根据选择的学校，配置专业数据
-						var codes = temp.subcode;
-						for (var i = 0; i < codes.length; i++) {
-							var sub = subs[codes[i]];
-							$($(".profession")[i]).html(sub);
-							$($(".profession")[i]).show();
-						}
-						// 向上滑动
-						if (isAnimating) return;
-						last.row = now.row;
-						last.col = now.col;
-						if (last.row != 12) {
-							now.row = last.row + 1;
-							now.col = 1; pageMove(towards.up);
-						}
-					});
-
 					//得到每个校区名字
 					var liIndex = $(this).index();
 					var schoolName = $(this).html();
@@ -299,15 +272,37 @@ $(function() {
 			}
 		});
 	}
+	// 选择学校界面的确定按钮监听事件
+	$("#confirm").on("singleTap", function() {
+		if(!temp.subcode){
+			showbox("请选择学校");
+			return;
+		}
+		// 根据选择的学校，配置专业数据
+		var codes = temp.subcode;
+		for (var i = 0; i < codes.length; i++) {
+			var sub = subs[codes[i]];
+			$($(".profession")[i]).html(sub);
+			$($(".profession")[i]).show();
+		}
+		// 向上滑动
+		if (isAnimating) return;
+		last.row = now.row;
+		last.col = now.col;
+		if (last.row != 12) {
+			now.row = last.row + 1;
+			now.col = 1; pageMove(towards.up);
+		}
+	});
+
 
 	//点击学校名称页面的×号，关闭页面
 	$(".modal-close-btn").on("singleTap", function() {
-		setTimeout(function() {
-			$("#schools").css("display", "none");
-			$(".kuang").css("display", "none");
-			$("#confirm").css("display", "none");
-			$("#confirm").unbind();
-		}, 500);
+		$("#schools").css("display", "none");
+		$(".kuang").css("display", "none");
+		$("#confirm").css("display", "none");
+		// 关闭学校界面时,将temp中保存的学校数据删除
+		delete temp.subcode;
 	});
 
 	//得到专业的value值
@@ -322,23 +317,46 @@ $(function() {
 		});
 
 		$(".professionBtn").css("background", "#14c6d0");
-		$(".professionBtn").unbind();
-		$(".professionBtn").on("singleTap", function() {
-			if (isAnimating) return;
-			last.row = now.row;
-			last.col = now.col;
-			if (last.row != 12) {
-				now.row = last.row + 1;
-				now.col = 1; pageMove(towards.up);
-			}
-
-		});
 		temp.cus_Name = $(this).html();
 	});
-	/*//得到教师的名字
-	$("#uName").blur(function(){
-		temp.tea_Name = $(this).val();
-	});*/
+	// 点击专业页面的确定按钮的监听事件
+	$(".professionBtn").on("singleTap", function() {
+		// TODO
+		if(!temp.cus_Name){
+			showbox("请选择专业");
+			return;
+		}
+		//获取老师的类型 TODO
+		var typeValue = $('input[name="tachertype"]:checked').val();
+		if(confirm('评论老师的类型为:'+typeValue)){
+			var jsonpath = getJobName(typeValue);
+			$.getJSON(jsonpath, function(titles) {
+				// 布置题目
+				recycleDiv(titles);
+			});
+			// 类型
+			if (typeValue == "讲师") {
+				temp.role_Level = 0;
+			} else if (typeValue == "班主任") {
+				temp.role_Level = 1;
+			}else if(typeValue == "在线老师"){
+				temp.role_Level = 2;
+			}
+			// 提交数据获取班级和老师姓名数据
+			console.log('类型-->'+typeValue+',学校名称-->'+temp.sch_Name+',专业-->'+temp.cus_Name);
+			showRotatebox();
+			setTimeout(function(){
+				hideRotatebox();
+				if (isAnimating) return;
+				last.row = now.row;
+				last.col = now.col;
+				if (last.row != 12) {
+					now.row = last.row + 1;
+					now.col = 1; pageMove(towards.up);
+				}
+			},2000);
+		}
+	});
 	//判断输入的字符是否满足要求
 	function isMatch() {
 		var user = $("#uName").val();
@@ -367,123 +385,50 @@ $(function() {
 		hidebox();
 	});
 
-	$("#uName").bind("input propertychange", function() {
+	/*$("#uName").bind("input propertychange", function() {
 		var classInputVal = $("#classInput").val();
 		var taValue = $("#uName").val();
 		var len = getCharSize(taValue);
 		if (len >= 4 && len <= 10 && isMatch() && classInputVal != "") {
 			$(".btn").css("background", "#14c6d0");
-			//解绑点击事件
-			/*$(".btn").unbind();
-			$(".btn").click(lightBtnAndAjax);*/
 
 		} else if (len < 4 || !isMatch()) {
 			$(".btn").css("background", "#ccc");
-			//解绑点击事件
-			//$(".btn").unbind();
 		}
 	});
-
-	
 	$("#classInput").bind("input propertychange", function() {
 		if ($("#classInput").val() == "") {
 			$(".btn").css("background", "#ccc");
-			//解绑点击事件
-			//$(".btn").unbind();
 		} else {
 			var taValue = $("#uName").val();
 			var len = getCharSize(taValue);
 			if (len >= 4 && len <= 10 && isMatch()) {
 				$(".btn").css("background", "#14c6d0");
-				//解绑点击事件
-				/*$(".btn").unbind();
-				$(".btn").click(lightBtnAndAjax);*/
 			}
-		}
-	});
-	
-	
-	/*$("#uName").on("blur", function() {
-		var taValue = $("#uName").val();
-		var len = getCharSize(taValue);
-		var classInputVal = $("#classInput").val();
-		if(classInputVal==""){
-			$(".nameRemindWords").text("班级简称不能为空").css({"font-size":"14px","color":"#f00"});
-			$(".btn").css("background", "#ccc");
-			//解绑点击事件
-			$(".btn").unbind();
-			return;
-		}
-		if(taValue==""){
-			$(".nameRemindWords").text("教师姓名不能为空").css({"font-size":"14px","color":"#f00"});
-			$(".btn").css("background", "#ccc");
-			//解绑点击事件
-			$(".btn").unbind();
-			return;
-		}
-		if(len < 4 || len > 10 || !isMatch()){
-			$(".nameRemindWords").text("请输入2~5个中文字，不包括特殊字符和空格").css({"font-size":"14px","color":"#f00"});
-			$(".btn").css("background", "#ccc");
-			//解绑点击事件
-			$(".btn").unbind();
-			return;
-		}
-		if (len >= 4 && len <= 10 && isMatch() && classInputVal != "") {
-			$(".nameRemindWords").text("");
-			$(".btn").css("background", "#14c6d0");
-			//解绑点击事件
-			$(".btn").unbind();
-			$(".btn").click(lightBtnAndAjax);
 		}
 	});*/
 
-	function lightBtnAndAjax() {
+	function lightBtnAndAjax() {	
 		var taValue = $("#uName").val();
 		var len = getCharSize(taValue);
 		var classInputVal = $("#classInput").val();
 		if(classInputVal==""){
 			$(".nameRemindWords").text("班级简称不能为空").css({"font-size":"14px","color":"#f00"});
 			$(".btn").css("background", "#ccc");
-			//解绑点击事件
-			//$(".btn").unbind();
-			return;
 		}
 		if(taValue==""){
 			$(".nameRemindWords").text("教师姓名不能为空").css({"font-size":"14px","color":"#f00"});
 			$(".btn").css("background", "#ccc");
-			//解绑点击事件
-			//$(".btn").unbind();
-			return;
 		}
 		if(len < 4 || len > 10 || !isMatch()){
 			$(".nameRemindWords").text("请输入2~5个中文字，不包括特殊字符和空格").css({"font-size":"14px","color":"#f00"});
 			$(".btn").css("background", "#ccc");
-			//解绑点击事件
-			//$(".btn").unbind();
-			return;
 		}
-		
-		
 		$(".nameRemindWords").text("");
-		//获取老师的类型
-		var typeValue = $('input[name="tachertype"]:checked').val();
-		//console.log(typeValue);
-		var jsonpath = getJobName(typeValue);
-		$.getJSON(jsonpath, function(titles) {
-			recycleDiv(titles);
-		});
 
-		//在这里发送ajax请求给后台，判断是否已经评论过了
-		//类型
-		if (typeValue == "讲师") {
-			temp.role_Level = 0;
-		} else if (typeValue == "班主任") {
-			temp.role_Level = 1;
-		}
-		//tmp.role_Level = typeValue;
-		//得到班级的名字
+		// 得到班级的名字
 		temp.stu_Class = $("#classInput").val();
-		//得到教师的名字
+		// 得到教师的名字
 		temp.tea_Name = $("#uName").val();
 		var postdata = {
 			"large_Area" : temp.large_Area,
@@ -496,7 +441,7 @@ $(function() {
 		};
 		postComment(postdata, function(isComment, err) {
 			if (err) {
-				showbox("网络错误");
+				showbox("网络开小差了");
 			} else {
 				isComment = Number.parseInt(isComment)
 				if (isComment == 0) {
@@ -524,6 +469,7 @@ $(function() {
 		showRotatebox();
 		$.ajax({
 			async : false,
+			timeout: 5000,
 			method : "POST",
 			traditional : true,
 			url : "CheckServlet",
@@ -540,7 +486,14 @@ $(function() {
 				callback(null, err);
 				// 隐藏旋转动画
 				hideRotatebox();
-			}
+			},
+			complete : function(XMLHttpRequest,status){ 
+				// 隐藏旋转动画
+				hideRotatebox();
+		　　　　if(status=='timeout'){
+					showbox("请求超时");
+		　　　　}
+		　　}
 		});
 	}
 
@@ -549,9 +502,6 @@ $(function() {
 		var taValue = $("#suggestions").val();
 		temp.stu_Advice = taValue;
 	});
-
-
-	
 
 	$("#courses").blur(function() {
 		if ($("#courses").val() == "") {
@@ -729,13 +679,14 @@ $(function() {
 		showRotatebox();
 		var url = "SaveServlet";
 		$.ajax({
-			async : false,
+			async : true,
+			timeout: 5000,
 			method : "POST",
 			traditional : true,
+			url : url,
 			data : {
 				name : JSON.stringify(temp)
 			},
-			url : url,
 			success : function(data) {
 				hideRotatebox();
 				data = Number.parseInt(data);
@@ -749,20 +700,20 @@ $(function() {
 					}
 					showbox("点评成功！");
 				} else {
-					hideRotatebox();
 					showbox("点评失败！");
 				}
 			},
 			error : function(err) {
-				//showbox("网络错误！");
-				if (isAnimating) return;
-				last.row = now.row;
-				last.col = now.col;
-				if (last.row != 12) {
-					now.row = last.row + 1;
-					now.col = 1; pageMove(towards.up);
-				}
-			}
+				hideRotatebox();
+				showbox("网络开小差了！点评失败！");
+			},
+			complete : function(XMLHttpRequest,status){ 
+				// 隐藏旋转动画
+				hideRotatebox();
+		　　　　if(status=='timeout'){
+				  showbox("请求超时");
+		　　　　}
+		　　}
 		});
 	});
 
@@ -772,86 +723,6 @@ $(function() {
 
 	});
 
-	//显示柱形图
-	function showColumnChart(data) {
-		/**柱状图**/
-		var bigData = JSON.parse(data);
-		//获取标题
-		var strtit = bigData[0].cus_Name;
-		var lartit = bigData[0].large_Area;
-
-		// 基于准备好的dom,初始化echarts实例
-		var teacherName = [];
-		var teacherScore = [];
-		var teaName = []; //动态获取的老师的姓名
-		var teaSc = []; //动态获取的老师的分数
-		for (var i = 0; i < bigData.length; i++) {
-			teacherName.push(bigData[i].tea_Name);
-			teacherScore.push(bigData[i].average);
-		}
-		for (var i = 0; i < 5; i++) {
-			teaName.push(teacherName[i]);
-			teaSc.push(teacherScore[i]);
-		}
-
-		var myChart = echarts.init(document.getElementById('main'));
-		// 指定图表的配置项和数据
-
-		var option = {
-			title : {
-				text : 'ECharts 入门示例'
-			},
-			tooltip : {},
-			legend : {
-				itemWidth : 20,
-				backgroundColor : '#52a245'
-			},
-			color : [ '#52a245', '#000', '#00f', '#f00', '#0f0' ],
-			xAxis : {
-				data : teaName,
-				//                    name:"老师",
-				axisLabel : {
-					textStyle : {
-						fontSize : 14
-					},
-					interval : 0
-				}
-			},
-			yAxis : {
-				axisLabel : {
-					textStyle : {
-						fontSize : 15
-					}
-				},
-				name : "平均分数",
-				axisLabel : {
-					textStyle : {
-						fontSize : 20
-					},
-					interval : 0
-				}
-			},
-			series : [ {
-				name : '销量',
-				type : 'bar',
-				data : teaSc
-			} ]
-		};
-		myChart.setOption(option);
-		$("#bTit").html(lartit + "大区" + strtit + "排行");
-	}
-
-
-	//表单验证
-	//当失去焦点的时候，判断不能为空
-	/*$("#uName").blur(function(){
-		if($("#uName").val() == ""){
-			$(".nameRemindWords").html("姓名不能为空").css({"color":"#f00","font-size":"0.5rem"});
-		}else{
-			$(".nameRemindWords").html("");
-		}
-	});
-*/
 	/***第四屏班级输入框+教师姓名输入框**/
 	$(".classListOne span").click(function() {
 		$("#classInput").val($(this).html());
@@ -861,9 +732,6 @@ $(function() {
 			$(".nameRemindWords").html("姓名不能为空").css({"color":"#f00","font-size":"0.5rem"});
 			//点亮下方按钮
 			$(".btn").css("background", "#14c6d0");
-			//解绑点击事件
-			/*$(".btn").unbind();
-			$(".btn").click(lightBtnAndAjax);*/
 		}
 	});
 
@@ -872,13 +740,10 @@ $(function() {
 		if ($("#classInput").val() != "") {
 			//点亮下方按钮
 			$(".btn").css("background", "#14c6d0");
-			//解绑点击事件
-			/*$(".btn").unbind();
-			$(".btn").click(lightBtnAndAjax);*/
 		}
 	});
 
-	function clearInputValue() {
+	/*function clearInputValue() {
 		$(".btn").css("background", "#ccc");
 		//解绑点击事件
 		//$(".btn").unbind();
@@ -889,5 +754,5 @@ $(function() {
 		}
 	}
 	$(".closeBtn1").click(clearInputValue);
-	$(".closeBtn2").click(clearInputValue);
+	$(".closeBtn2").click(clearInputValue);*/
 });

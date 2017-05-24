@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
+import com.edu.util.DataBaseOperaUtil;
 import com.edu.util.DbPoolConnection;
 import com.edu.util.Log4j;
 
@@ -26,29 +27,35 @@ public class TestServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		System.out.println("发出的请求：------->" + req.getParameter("no"));
-		Statement stmt = null;
-		ResultSet rSet = null;
-		DruidPooledConnection conn = null;
-		int result;
 		try {
-			conn = DbPoolConnection.getInstance().getConnection();
-			String sql = "select count(1) from tab_researchinfo";
-			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.TYPE_FORWARD_ONLY);
-			rSet = stmt.executeQuery(sql);
-			while (rSet.next()) {
-				result = rSet.getInt(1);
-				System.out.println("查询结果--->" + result);
-			}
-
+			DataBaseOperaUtil.getSchools();
 		} catch (SQLException e) {
-			Log4j.error(TestServlet.class, e.getMessage());
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally {
-			DbPoolConnection.getInstance().close(conn, stmt, rSet);
 		}
-
-		myInsert(resp);
+//		System.out.println("发出的请求：------->" + req.getParameter("no"));
+//		Statement stmt = null;
+//		ResultSet rSet = null;
+//		DruidPooledConnection conn = null;
+//		int result;
+//		try {
+//			conn = DbPoolConnection.getInstance().getConnection();
+//			String sql = "select count(1) from tab_researchinfo";
+//			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.TYPE_FORWARD_ONLY);
+//			rSet = stmt.executeQuery(sql);
+//			while (rSet.next()) {
+//				result = rSet.getInt(1);
+//				System.out.println("查询结果--->" + result);
+//			}
+//
+//		} catch (SQLException e) {
+//			Log4j.error(TestServlet.class, e.getMessage());
+//			e.printStackTrace();
+//		} finally {
+//			DbPoolConnection.getInstance().close(conn, stmt, rSet);
+//		}
+//
+//		myInsert(resp);
 
 	}
 

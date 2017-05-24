@@ -18,7 +18,7 @@ strong{
 }
 .main{
 	background-color:#1ba747;
-	padding-bottom: 10%;
+	/*padding-bottom: 10%;*/
 }
 .contentContainer{
 	width:1000px;
@@ -30,8 +30,11 @@ strong{
 }
 
 .upContainer{
+	width:940px;
+	margin-left:30px;
 	padding:20px 0;
-	overflow:hidden;
+	/*overflow:hidden;*/
+	
 }
 .btnContainer{
 	padding-bottom:20px;
@@ -64,7 +67,7 @@ strong{
 	width:100px;
 	height:30px;
 	background:#008740;
-  font-size:20px;
+  	font-size:20px;
 	color:#fff;
 	border:none;
 }
@@ -90,22 +93,25 @@ input.Wdate{
 }
 .footer{
 	width:100%;
-	height:70px;
-	padding-top:30px;
+	height:76px;
 	background:#3a3a3a;
 }
 .footerText{
 	text-align:center;
 	font-size:14px;
 	color:#fff;
-	line-height:26px;
 
+
+}
+.footerText1{
+	padding-top:14px;
 }
 #selectDiv{
 	padding:20px;
 	background:#18272c;
-	width:960px;
+	width:1000px;
 	margin:0 auto;
+	height:372px;
 
 }
 #selectDiv th{
@@ -126,4 +132,55 @@ input.Wdate{
 #tab th,#tab td{
 	width:150px;
 	padding:4px 0;
+	text-align:center;
 }
+/***分页功能区**/
+.pageArea{
+	overflow: hidden;
+}
+.pageAreaText{
+	float:left;
+	line-height:24px;
+}
+/***分页提示区**/
+.pageReminder{
+	margin:20px 0;
+	float: left;
+	height:36px;
+
+}
+.pageAreaText{
+	color:#fff;
+	font-size:14px;
+}
+.pageAreaNum{
+	color:#fff;
+}
+.pageAreaInp{
+	width:100px;
+	color:#4D4D4D;	
+}
+.pageBtn{
+	display:inline-block;
+	width:50px;
+	height:30px;
+	line-height:30px;
+	background: #337ab7;
+	border-radius: 2px;
+	text-align:center;
+	color:#fff;
+	cursor: pointer;
+}
+/**分页效果区**/
+.dividePageContainer{
+	margin:0 auto;
+	float:right;
+}
+.dividePageContainer a{
+	cursor:pointer;
+}
+.dividePageContainer .active{
+	background:#aaF;
+	color:#000;
+}
+
