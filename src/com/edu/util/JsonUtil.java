@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.edu.bean.Investigation;
 import com.edu.bean.SelectBean;
+import com.edu.bean.UpDateBean;
 import com.edu.bean.AccessTokenBean;
 import com.edu.bean.WXUserBean;
 
@@ -311,5 +312,38 @@ public class JsonUtil {
 		}
 		return bean;
 	}
+
+//	public static UpDateBean getUpdateJsonData(String updateJson) {
+//		UpDateBean uBean = null;
+//		if (updateJson != null) {
+//			uBean = new UpDateBean();
+//			JSONObject jsonObj = JSONObject.fromObject(updateJson);
+//			String oldTeacherName = jsonObj.getString("oldTeacherName");
+//			String oldRole = jsonObj.getString("oldRole");
+//			String oldClassName = jsonObj.getString("oldClassName");
+//			String oldMajorName = jsonObj.getString("oldMajorName");
+//			String oldSchoolName = jsonObj.getString("oldSchoolName");
+//
+//			String newTeacherName = jsonObj.getString("newTeacherName");
+//			String newRole = jsonObj.getString("newRole");
+//			String newClassName = jsonObj.getString("newClassName");
+//			String newMajorName = jsonObj.getString("newMajorName");
+//			String newSchoolName = jsonObj.getString("newSchoolName");
+//
+////			uBean.setOldClassName(oldClassName);
+////			uBean.setOldMajorName(oldMajorName);
+////			uBean.setOldRole(oldRole);
+////			uBean.setOldSchoolName(oldSchoolName);
+////			uBean.setOldTeacherName(oldTeacherName);
+//
+//			uBean.setNewClassName(newClassName);
+//			uBean.setNewMajorName(newMajorName);
+//			uBean.setNewRole(newRole);
+//			uBean.setNewSchoolName(newSchoolName);
+//			uBean.setNewTeacherName(newTeacherName);
+//
+//		}
+//		return uBean;
+//	}
 
 }

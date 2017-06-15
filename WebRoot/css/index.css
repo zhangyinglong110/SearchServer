@@ -212,11 +212,11 @@
 	margin-right:8%;
 }
 
-.nameRemindWords,.courseRemindWords{
+/*.nameRemindWords,.courseRemindWords{
 	color:#06e6f2;
 	padding-top:5%;
 	padding-left:1%;
-}
+}*/
 
 
 .page-title {
@@ -531,6 +531,6 @@ i {
 }
 
 .inp {
-	-webkit-appearance: none;
+	/*-webkit-appearance: none;*/
 	background: white;
 }

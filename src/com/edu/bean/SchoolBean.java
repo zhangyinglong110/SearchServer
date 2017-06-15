@@ -1,5 +1,6 @@
 package com.edu.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,8 +10,18 @@ import java.util.List;
  *
  */
 public class SchoolBean {
+	private int schID;
 	private String sch;
-	private List<Integer> subcode;
+	private List<Integer> subcode = new ArrayList<Integer>();
+	public int tempSubcode = -1;//ÁÙÊ±¼ÇÂ¼¿Î³ÌID
+	
+	public int getSchID() {
+		return schID;
+	}
+
+	public void setSchID(int schID) {
+		this.schID = schID;
+	}
 
 	public String getSch() {
 		return sch;

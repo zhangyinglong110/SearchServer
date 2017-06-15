@@ -1,12 +1,13 @@
 package com.edu.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListBean {
 
 	private RecentBean history;
 
-	private List<LargeAreaBean> bigarea;
+	private List<LargeAreaBean> bigarea = new ArrayList<LargeAreaBean>();
 
 	private List<List<SchoolBean>> schools;
 

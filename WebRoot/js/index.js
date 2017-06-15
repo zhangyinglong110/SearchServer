@@ -9,12 +9,39 @@ $(function() {
 		document.documentElement.style.fontSize = deviceWidth / 10.8 + 'px';
 	};
 
-
 	function getQueryString(name){
 		 var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
 		 var r = decodeURI(window.location.search).substr(1).match(reg);
 		 if(r!=null)return  unescape(r[2]); return null;
 	}
+		//判断输入的字符是否满足要求
+	function isMatch() {
+		var user = $("#uName").val();
+		var patten = new RegExp("^([\u4E00-\u9FA5]{2,5})$");
+		return patten.test(user);
+	}
+	//隐藏弹框
+	function hidebox() {
+		$('.box').hide();
+	}
+	//显示弹框
+	function showbox(info) {
+		$('.info').text(info);
+		$('.box').show();
+	}
+	// 隐藏旋转动画
+	function hideRotatebox(){
+		$('.rotatebox').hide();
+	}
+	// 显示旋转动画
+	function showRotatebox(){
+		$('.rotatebox').show();
+	}
+	//点击确定隐藏弹框
+	$(".cont .yes").on("click", function() {
+		hidebox();
+	});
+    
 
 	//这里我们给个定时器来实现页面加载完毕再进行字体设置
 	var now = {
@@ -37,22 +64,6 @@ $(function() {
 	ss = 250 * (1 - s);
 
 	$('.wrap').css('-webkit-transform', 'scale(' + s + ',' + s + ') translate(0px,-' + ss + 'px)');
-
-	/*document.addEventListener('touchmove', function(event) {
-		event.preventDefault();
-	}, false);
-	$(".page.pageCanSwipe").swipeUp(function() {
-		upSwipping();
-		function upSwipping() {
-			if (isAnimating) return;
-			last.row = now.row;
-			last.col = now.col;
-			if (last.row != 16) {
-				now.row = last.row + 1;
-				now.col = 1; pageMove(towards.up);
-			}
-		}
-	});*/
 
 	function pageMove(tw) {
 		var lastPage = ".page-" + last.row + "-" + last.col;
@@ -132,66 +143,39 @@ $(function() {
 	}
 	// 配置大区字段
 	(function confAllJsonData() {
-		// 大区的数据
-		var p0 = new Promise(function(resolve, reject) {
-			$.getJSON("json/jsondata/bigarea.json", function(bArea) {
-				resolve(bArea);
-			});
-		});
-		// 学校数据
-		var p1 = new Promise(function(resolve, reject) {
-			$.getJSON('json/jsondata/schools.json', function(schools) {
-				resolve(schools);
-			})
-		});
-		//专业数据
-		var p2 = new Promise(function(resolve, reject) {
-			$.getJSON("json/jsondata/subject.json", function(subs) {
-				resolve(subs);
-			});
-		});
-		var p3 = new Promise(function(resolve, reject) {
-			$.ajax({
-				async : false,
-				method : "POST",
-				traditional : true,
-				url : "recentServlet",
-				timeout:  5000,
-				data : {
-					uid : getQueryString('uid')
-				},
-				async : true,
-				success : function(data) {
-					resolve(data);
-				},
-				error : function(err) {
-					resolve('{"classList":[],"teacherName":[]}');
-				},
-				complete : function(XMLHttpRequest,status){ 
-			　　　　if(status=='timeout'){
-			 			resolve('{"classList":[],"teacherName":[]}');
-			　　　　}
-			　　}
-			});
-		});
-
-		Promise.all([ p0, p1, p2 ]).then(function(results) {
-			// 大区
-			confBigAreaText(results[0]);
-			// 学校
-			schoolChoice(results[1]);
-			// 专业
-			confSubjectText(results[2]);
-		});
-		p3.then(function(data) {
-			updateClassAndTeaName(data);
-		}, function(data) {
-			updateClassAndTeaName(data);
+		$.ajax({
+			async : false,
+			method : "GET",
+			traditional : true,
+			url : "recentServlet",
+			timeout:  5000,
+			success : function(data) {
+				if(data.code == 200){
+					// 大区
+					confBigAreaText(data.results.bigarea);
+					// 学校
+					schoolChoice(data.results.schools);
+					// 专业
+					confSubjectText(data.results.subject);
+					// 历史数据
+					updateClassAndTeaName(data.results.history);
+				}else{
+					showbox('没有数据');
+				}
+				
+			},
+			error : function(err) {
+				showbox('数据请求失败');
+			},
+			complete : function(XMLHttpRequest,status){ 
+		　　　　if(status=='timeout'){
+		 		showbox('数据请求失败');
+		　　　　}
+		　　}
 		});
 	})();
 
 	function updateClassAndTeaName(tcs) {
-		tcs = JSON.parse(tcs);
 		var classSpans = $(".classListOne span");
 		var min = Math.min(tcs.classList.length, classSpans.length);
 		for (var i = 0; i < min; i++) {
@@ -216,9 +200,9 @@ $(function() {
 	}
 
 	// 配置专业数据
-	var subs = [];
+	//var subs = [];
 	function confSubjectText(sub) {
-		subs = sub;
+		temp.subs = sub;
 	}
 
 	//点击大区选项进入校区选项
@@ -281,7 +265,8 @@ $(function() {
 		// 根据选择的学校，配置专业数据
 		var codes = temp.subcode;
 		for (var i = 0; i < codes.length; i++) {
-			var sub = subs[codes[i]];
+			console.log(temp.subs);
+			var sub = temp.subs[codes[i]];
 			$($(".profession")[i]).html(sub);
 			$($(".profession")[i]).show();
 		}
@@ -319,16 +304,18 @@ $(function() {
 		$(".professionBtn").css("background", "#14c6d0");
 		temp.cus_Name = $(this).html();
 	});
+	var GLOBAL = GLOBAL || {};
+	//预置字符串
+    GLOBAL.selectTips= '<option value="" disabled selected style="display:none;">请选择</option>';
 	// 点击专业页面的确定按钮的监听事件
 	$(".professionBtn").on("singleTap", function() {
-		// TODO
 		if(!temp.cus_Name){
 			showbox("请选择专业");
 			return;
 		}
-		//获取老师的类型 TODO
+		//获取老师的类型
 		var typeValue = $('input[name="tachertype"]:checked').val();
-		if(confirm('评论老师的类型为:'+typeValue)){
+		if(confirm('评论老师的类型: '+typeValue)){
 			var jsonpath = getJobName(typeValue);
 			$.getJSON(jsonpath, function(titles) {
 				// 布置题目
@@ -345,91 +332,111 @@ $(function() {
 			// 提交数据获取班级和老师姓名数据
 			console.log('类型-->'+typeValue+',学校名称-->'+temp.sch_Name+',专业-->'+temp.cus_Name);
 			showRotatebox();
-			setTimeout(function(){
-				hideRotatebox();
-				if (isAnimating) return;
-				last.row = now.row;
-				last.col = now.col;
-				if (last.row != 12) {
-					now.row = last.row + 1;
-					now.col = 1; pageMove(towards.up);
-				}
-			},2000);
+			
+			//TODO 获取班级和老师名称信息 schoolName majorName, role_Level
+			$.ajax({
+				async : true,
+				method : "GET",
+				traditional : true,
+				url : "ClassAndTeacherServlet?schoolName="+temp.sch_Name+"&majorName="+temp.cus_Name+"&role_Level="+typeValue,
+				timeout:  5000,
+				success : function(data) {
+					if(data.code==200){
+						GLOBAL.selectData = data.results;
+			            var ctStr = GLOBAL.selectTips;
+			            for (var i = 0; i < GLOBAL.selectData.length; i++) {
+			                if (GLOBAL.selectData[i].fatherid == 0) {
+			                	ctStr += '<option text="'+ GLOBAL.selectData[i].title +'"value="'+ GLOBAL.selectData[i].uuid +'">'+ GLOBAL.selectData[i].title +'</option>';
+			                }
+			            };
+			            $("#classInput").html(ctStr);
+			            hideRotatebox();
+						if (isAnimating) return;
+						last.row = now.row;
+						last.col = now.col;
+						if (last.row != 12) {
+							now.row = last.row + 1;
+							now.col = 1; pageMove(towards.up);
+						}
+					}else{
+						hideRotatebox();
+						showbox('没有数据');
+					}
+				},
+				error : function(err) {
+					hideRotatebox();
+					showbox('数据请求失败');
+				},
+				complete : function(XMLHttpRequest,status){ 
+			　　　　if(status=='timeout'){
+					hideRotatebox();
+			 		showbox('数据请求失败');
+			　　　　}
+			　　}
+			});
+			
+			
+			//获取下拉列表信息
+			/*$.getJSON('json/class.json',function(data){
+				if(data.code == 200){
+		        	GLOBAL.selectData = data.results;
+		            var ctStr = GLOBAL.selectTips;
+		            for (var i = 0; i < GLOBAL.selectData.length; i++) {
+		                if (GLOBAL.selectData[i].fatherid == 0) {
+		                	ctStr += '<option text="'+ GLOBAL.selectData[i].title +'"value="'+ GLOBAL.selectData[i].uuid +'">'+ GLOBAL.selectData[i].title +'</option>';
+		                }
+		            };
+		            $("#classInput").html(ctStr);
+		            hideRotatebox();
+					if (isAnimating) return;
+					last.row = now.row;
+					last.col = now.col;
+					if (last.row != 12) {
+						now.row = last.row + 1;
+						now.col = 1; pageMove(towards.up);
+					}
+		        }else{
+		        	showbox('获取数据失败');
+		        }
+			});*/
 		}
 	});
-	//判断输入的字符是否满足要求
-	function isMatch() {
-		var user = $("#uName").val();
-		var patten = new RegExp("^([\u4E00-\u9FA5]{2,5})$");
-		return patten.test(user);
+	// 二级联动
+	function twoToggle(){
+		var fId = $(classInput).val();
+        $("#uName").empty();
+        var ctStr = GLOBAL.selectTips;
+        for (var i = 0; i < GLOBAL.selectData.length; i++) {
+            if (GLOBAL.selectData[i].fatherid == fId) {
+                ctStr += '<option text="'+ GLOBAL.selectData[i].title +'"value="'+ GLOBAL.selectData[i].uuid +'">'+ GLOBAL.selectData[i].title +'</option>';
+            }
+        };
+        $("#uName").html(ctStr);
 	}
-	//隐藏弹框
-	function hidebox() {
-		$('.box').hide();
-	}
-	//显示弹框
-	function showbox(info) {
-		$('.info').text(info);
-		$('.box').show();
-	}
-	// 隐藏旋转动画
-	function hideRotatebox(){
-		$('.rotatebox').hide();
-	}
-	// 显示旋转动画
-	function showRotatebox(){
-		$('.rotatebox').show();
-	}
-	//点击确定隐藏弹框
-	$(".cont .yes").on("click", function() {
-		hidebox();
-	});
 
-	/*$("#uName").bind("input propertychange", function() {
-		var classInputVal = $("#classInput").val();
-		var taValue = $("#uName").val();
-		var len = getCharSize(taValue);
-		if (len >= 4 && len <= 10 && isMatch() && classInputVal != "") {
-			$(".btn").css("background", "#14c6d0");
-
-		} else if (len < 4 || !isMatch()) {
-			$(".btn").css("background", "#ccc");
-		}
+	// 选择班级select添加change事件
+	$("#classInput").change(twoToggle);
+	// 选择老师change事件
+	$("#uName").change(function(){
+		$(".btn").css("background", "#14c6d0");
 	});
-	$("#classInput").bind("input propertychange", function() {
-		if ($("#classInput").val() == "") {
-			$(".btn").css("background", "#ccc");
-		} else {
-			var taValue = $("#uName").val();
-			var len = getCharSize(taValue);
-			if (len >= 4 && len <= 10 && isMatch()) {
-				$(".btn").css("background", "#14c6d0");
-			}
-		}
-	});*/
 
 	function lightBtnAndAjax() {	
-		var taValue = $("#uName").val();
-		var len = getCharSize(taValue);
-		var classInputVal = $("#classInput").val();
-		if(classInputVal==""){
-			$(".nameRemindWords").text("班级简称不能为空").css({"font-size":"14px","color":"#f00"});
-			$(".btn").css("background", "#ccc");
+		var classValue = $('#classInput').val();
+		if(classValue == ''){
+			showbox('请选择班级');
+			return;
 		}
-		if(taValue==""){
-			$(".nameRemindWords").text("教师姓名不能为空").css({"font-size":"14px","color":"#f00"});
-			$(".btn").css("background", "#ccc");
+		var teacherValue = $('#uName').val();
+		if(teacherValue == ''){
+			showbox('请选择老师');
+			return;
 		}
-		if(len < 4 || len > 10 || !isMatch()){
-			$(".nameRemindWords").text("请输入2~5个中文字，不包括特殊字符和空格").css({"font-size":"14px","color":"#f00"});
-			$(".btn").css("background", "#ccc");
-		}
-		$(".nameRemindWords").text("");
-
 		// 得到班级的名字
-		temp.stu_Class = $("#classInput").val();
+		temp.stu_Class = jQuery("#classInput option:selected").text();
 		// 得到教师的名字
-		temp.tea_Name = $("#uName").val();
+		temp.tea_Name = jQuery("#uName option:selected").text();
+		alert(temp.stu_Class+'-->'+temp.tea_Name);
 		var postdata = {
 			"large_Area" : temp.large_Area,
 			"sch_Name" : temp.sch_Name,
@@ -501,15 +508,6 @@ $(function() {
 	$("#suggestions").bind("input propertychang", function() {
 		var taValue = $("#suggestions").val();
 		temp.stu_Advice = taValue;
-	});
-
-	$("#courses").blur(function() {
-		if ($("#courses").val() == "") {
-			$(".courseRemindWords").html("课程不能为空");
-		} else {
-			$(".courseRemindWords").html("");
-		}
-
 	});
 
 	//获得字符串的字符数
@@ -673,6 +671,8 @@ $(function() {
 		}
 		// 删除专业代码属性
 		delete temp.subcode;
+		// 删除专业数组属性
+		delete temp.subs;
 		console.log(temp);
 		temp.uid = getQueryString('uid');
 		temp.nickName = getQueryString('tid');
@@ -690,7 +690,7 @@ $(function() {
 			success : function(data) {
 				hideRotatebox();
 				data = Number.parseInt(data);
-				if (data == 200) {
+				if (data.code == 200) {
 					if (isAnimating) return;
 					last.row = now.row;
 					last.col = now.col;
@@ -725,34 +725,30 @@ $(function() {
 
 	/***第四屏班级输入框+教师姓名输入框**/
 	$(".classListOne span").click(function() {
-		$("#classInput").val($(this).html());
-
-		if ($("#uName").val() != "") {
-			/**如果教师姓名输入框为空，提示文字不能为空**/
-			$(".nameRemindWords").html("姓名不能为空").css({"color":"#f00","font-size":"0.5rem"});
-			//点亮下方按钮
-			$(".btn").css("background", "#14c6d0");
+		var txt = $(this).html();
+		var len = jQuery("#classInput").find("option[text="+txt+"]").length;
+		if(len==0){
+			showbox('您已经不在此班级');
+		}else{
+			jQuery("#classInput").find("option[text="+txt+"]").attr("selected",true);
+			twoToggle();
 		}
 	});
 
 	$(".nameList span").click(function() {
-		$("#uName").val($(this).html());
-		if ($("#classInput").val() != "") {
-			//点亮下方按钮
+		// 首先判断班级是否已经选择了
+		var v= $("#classInput").val();
+		if($("#classInput").val()==''){
+			showbox('请首先选择班级');
+			return;
+		}
+		var txt = $(this).html();
+		var len = jQuery("#uName").find("option[text="+txt+"]").length;
+		if(len==0){
+			showbox('您对此老师不需要评论');
+		}else{
+			jQuery("#uName").find("option[text="+txt+"]").attr("selected",true);
 			$(".btn").css("background", "#14c6d0");
 		}
 	});
-
-	/*function clearInputValue() {
-		$(".btn").css("background", "#ccc");
-		//解绑点击事件
-		//$(".btn").unbind();
-		if ($(this).attr("class") == "closeBtn1") {
-			$("#classInput").val("");
-		} else {
-			$("#uName").val("");
-		}
-	}
-	$(".closeBtn1").click(clearInputValue);
-	$(".closeBtn2").click(clearInputValue);*/
 });

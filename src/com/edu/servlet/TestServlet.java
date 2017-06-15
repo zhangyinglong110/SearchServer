@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,9 +14,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
+import com.edu.bean.ClassBean;
+import com.edu.bean.AllClass;
 import com.edu.util.DataBaseOperaUtil;
 import com.edu.util.DbPoolConnection;
 import com.edu.util.Log4j;
+
+import net.sf.json.JSONObject;
 
 @WebServlet(name = "test", urlPatterns = "/Test")
 public class TestServlet extends HttpServlet {
@@ -28,34 +33,42 @@ public class TestServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
-			DataBaseOperaUtil.getSchools();
-		} catch (SQLException e) {
+//			List<AllClass> list = DataBaseOperaUtil.getClassList();
+//			ClassBean cb = new ClassBean();
+//			cb.setCode(200);
+//			cb.setMsg("成功");
+//			cb.setResults(list);
+//			JSONObject jsonObject = JSONObject.fromObject(cb);
+//			System.out.println(jsonObject.toString());
+
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-//		System.out.println("发出的请求：------->" + req.getParameter("no"));
-//		Statement stmt = null;
-//		ResultSet rSet = null;
-//		DruidPooledConnection conn = null;
-//		int result;
-//		try {
-//			conn = DbPoolConnection.getInstance().getConnection();
-//			String sql = "select count(1) from tab_researchinfo";
-//			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.TYPE_FORWARD_ONLY);
-//			rSet = stmt.executeQuery(sql);
-//			while (rSet.next()) {
-//				result = rSet.getInt(1);
-//				System.out.println("查询结果--->" + result);
-//			}
-//
-//		} catch (SQLException e) {
-//			Log4j.error(TestServlet.class, e.getMessage());
-//			e.printStackTrace();
-//		} finally {
-//			DbPoolConnection.getInstance().close(conn, stmt, rSet);
-//		}
-//
-//		myInsert(resp);
+		// System.out.println("发出的请求：------->" + req.getParameter("no"));
+		// Statement stmt = null;
+		// ResultSet rSet = null;
+		// DruidPooledConnection conn = null;
+		// int result;
+		// try {
+		// conn = DbPoolConnection.getInstance().getConnection();
+		// String sql = "select count(1) from tab_researchinfo";
+		// stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+		// ResultSet.TYPE_FORWARD_ONLY);
+		// rSet = stmt.executeQuery(sql);
+		// while (rSet.next()) {
+		// result = rSet.getInt(1);
+		// System.out.println("查询结果--->" + result);
+		// }
+		//
+		// } catch (SQLException e) {
+		// Log4j.error(TestServlet.class, e.getMessage());
+		// e.printStackTrace();
+		// } finally {
+		// DbPoolConnection.getInstance().close(conn, stmt, rSet);
+		// }
+		//
+		// myInsert(resp);
 
 	}
 

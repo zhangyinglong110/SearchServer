@@ -60,10 +60,14 @@ public class ExportssServlet extends HttpServlet {
 				String[] headName1 = { "大区", "校区", "教师姓名", "角色", "专业", "班级", "老师出勤", "项目讲解", "培训提问", "回答问题", "老师指导",
 						"培训纪律", "讲解技巧", "培训进度", "实例讲解", "培训后作品", "总分", "平均分", "学员建议", "填表日期" };
 				expressTeacher(req, resp, headName1, exportList, selectBean);
-			} else {
+			} else if (exportList.get(0).getRole_Level().equals("班主任")) {
 				String[] headName2 = { "大区", "校区", "教师姓名", "角色", "专业", "班级", "老师出勤", "关心程度", "巡堂", "找学员沟通", "缺勤关注",
 						"班级纪律", "受理投诉", "组织活动", "资料的及时收发", "整体工作评分", "总分", "平均分", "学员建议", "填表日期" };
 				expressTeacher(req, resp, headName2, exportList, selectBean);
+			}else {
+				String[] headName3 = { "大区", "校区", "教师姓名", "角色", "专业", "班级", "企业信息发布", "企业宣讲", "行业宣讲", "学员活动", "职业素养课程",
+						"学员沟通", "简历撰写指导", "模拟面试", "就业服务", "整体工作评分", "总分", "平均分", "学员建议", "填表日期" };
+				expressTeacher(req, resp, headName3, exportList, selectBean);
 			}
 		} else {
 			PrintWriter out = resp.getWriter();
@@ -138,7 +142,7 @@ public class ExportssServlet extends HttpServlet {
 				"cls_Skill", "cls_Progress", "exam_Explain", "class_Homework", "total_Score", "average", "stu_Advice",
 				"fill_Date" };// 列id
 		ExportUtils.outputHeaders(headName, sheets, headerStyle);// 生成表头
-		ExportUtils.outputColumn(Column, exportList, sheets, 1, cell_Style, cell_Style_new,cell_Style_red);// 生成列表数据
+		ExportUtils.outputColumn(Column, exportList, sheets, 1, cell_Style, cell_Style_new, cell_Style_red);// 生成列表数据
 
 		// ----------------------------导出表格的操作-----------------------------
 		String path = req.getRealPath("/xlsx");

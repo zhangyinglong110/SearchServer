@@ -3,35 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<script type="text/javascript">
-	var city = [
-		[ "北京", "天津", "上海", "重庆" ],
-		[ "南京", "苏州", "南通", "常州" ],
-		[ "福州", "福安", "龙岩", "南平" ],
-		[ "广州", "潮阳", "潮州", "澄海" ],
-		[ "兰州", "白银", "定西", "敦煌" ]
-	];
-
-	function getCity() {
-		//获得省份下拉框的对象    
-		var sltProvince = document.form1.province;
-		//获得城市下拉框的对象    
-		var sltCity = document.form1.city;
-		//得到对应省份的城市数组    
-		var provinceCity = city[sltProvince.selectedIndex - 1];
-		//清空城市下拉框，仅留提示选项    
-		sltCity.length = 1;
-		//将城市数组中的值填充到城市下拉框中    
-		for (var i = 0; i < provinceCity.length; i++) {
-			sltCity[i + 1] = new Option(provinceCity[i], provinceCity[i]);
-		}
-	}
-</script>
 </head>
 <body>
-	<form action="Test" method="post">
-		<input type="submit" value="发送请求">
-	</form>
 
+1.首页查询接口:<br>
+url: editPageServlet<br>
+请求的参数：<br>
+largeName  大区名称<br>
+schoolName 校区的名称<br>
+majorName  专业名称<br>
+
+返回的数据格式为：
+{"code":200,
+    "msg":" success",
+    "results":[
+    	{
+            "teacherName":"Dear Linda",
+            "role":"讲师",
+            "className":"web前端1班"
+            "majorName":"web前端",
+            "majorId":1,
+            "schoolId":1
+        }
+    
+    ]
+}
+<br>
+--------------------------------------------------------------------------------------
+<br>
+2.新增数据接口:<br>
+url:editPageInsertServlet<br>
+请求参数:<br>
+schoolName 校区名称<br>
+teacherName 老师名称<br>
+className  班级名称<br>
+role      角色<br>
+majorName  专业名称<br>
+
+ 
+返回数据：
+直接返回一个字符串："插入成功！"<br>
+---------------------------------------------------------------------<br>
+
+3.删除某一条数据的接口:<br>
+url : deleteEditPageServlet<br>
+请求参数:<br>
+schoolName 校区名称<br>
+teacherName 老师名称<br>
+className  班级名称<br>
+role      角色<br>
+majorName  专业名称<br>
+
+返回数据：<br>
+直接返回一个字符串："删除成功！"<br>
+
+---------------------------------------------------------------------<br>
+4.修改校区老师的信息接口：<br>
+url:updateEditInfoServlet
+请求参数:<br>
+json参数的名称：updateJsonData<br>
+{
+	oldTeacherName :"张应龙",
+	oldRole :"讲师",
+	oldClassName:"java一班",
+	oldMajorName:"java",
+	oldSchoolName:"北京中关村",
+	newTeacherName :"刘源作",
+	newRole :"讲师",
+	newClassName:"web一班",
+	newMajorName:"web",
+	newSchoolName:"北京国贸",
+}
+
+返回数据：<br>
+直接返回一个字符串："修改成功！"<br>
 </body>
 </html>
